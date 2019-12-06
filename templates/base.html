@@ -240,22 +240,67 @@ desired effect
         <!-- Optionally, you can add icons to the links -->
 {#        <li><a href="{% url 'assets:dashboard' %}"><i class="fa fa-dashboard"></i> <span>仪表盘</span></a></li>#}
 {#        <li><a href="{% url 'assets:index' %}"><i class="fa fa-table"></i> <span>资产总表</span></a></li>#}
-          <li class="treeview">
-              <a href="{%  %}"
+
+      <!-- 仪表盘 -->
+          <li class="treeview" style="height: auto" {% ifequal web_title 'dashboard' %}class="active"{% endifequal %}>
+              <a href="#">
+                  <i class="fa fa-dashboard"></i><span>仪表盘</span>
+                  <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+              </a>
           </li>
+      <!-- 任务 -->
+          <li class="treeview" style="height: auto" {% ifequal web_title '' %}class="active"{% endifequal %}>
+              <a href="#">
+                  <i class="fa fa-bars"></i><span>任务管理</span>
+                  <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+              </a>
+          </li>
+      <!-- 邮件模板 -->
+          <li class="treeview" style="height: auto">
+              <a href="#">
+                  <i class="fa fa-envelope"></i><span>邮件模板</span>
+                  <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+              </a>
+          </li>
+      <!-- 钓鱼页面 -->
+          <li class="treeview" style="height: auto">
+              <a href="#">
+                  <i class="fa fa-file"></i><span>钓鱼页面</span>
+                  <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+              </a>
+          </li>
+      <!-- 角色伪造 -->
+          <li class="treeview" style="height: auto">
+              <a href="#">
+                  <i class="fa fa-male"></i><span>角色伪造</span>
+                  <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+              </a>
+          </li>
+      <!-- 用户 -->
           <li class="treeview" style="height: auto" {% ifequal web_func 'user' %}class="active"{% endifequal %}>
               <a herf="{% url 'users:user_list' %}">
-                  <i class="fa fa-user"></i>
-                  <span>用户</span>
+                  <i class="fa fa-user"></i><span>用户管理</span>
                   <span class="pull-right-container">
                       <i class="fa fa-angle-left pull-right"></i>
                   </span>
               </a>
               <ul class="nav treeview-menu" style="display: block">
                 <li>
-                    <a href="{% url 'users:user_list' %}"><span>用户管理</span></a>
+                    <a href="{% url 'users:user_list' %}"><span>用户列表</span></a>
                 </li>
-
+                <li>
+                    <a href="#"><span>登录记录</span></a>
+                </li>
               </ul>
           </li>
 
