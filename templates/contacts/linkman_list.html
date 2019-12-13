@@ -1,0 +1,381 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  联系人列表
+{% endblock title %}
+
+<!-- 主体 -->
+{% block content %}
+  <div class="col">
+    <p style="height: 2px;"></p>
+    <!-- 中间栏 -->
+    <div class="padder">
+      <!-- 联系人列表 -->
+      <div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div style="border-left: 4px solid #003366; margin-bottom: 10px; margin-top: 10px; height: 25px;font-size: 18px;">
+              <span>&nbsp;&nbsp;联系人列表</span>
+            </div>
+          </div>
+          <div class="panel-body container" style="height: 745px;">
+            <div class="module-option clearfix">
+              <form class="navbar-form pull-left " role="search" method="get" style="margin-top: 0px;">
+                <div class="form-group">
+                  <div class="input-group">
+                    <input type="text" class="form-control input-sm bg-light no-border rounded" name="keywords"
+                           placeholder="关键词搜索" style="width: 150px;">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-sm bg-auto rounded"><i class="fa fa-search"></i></button>
+                      </span>
+                  </div>
+                </div>
+              </form>
+                <div class="navbar-btn pull-right" style="margin-top: 0px;width: 150px;">
+                    <span>
+                          <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#AddLinkmanModal"><i class="fa fa-plus"></i> 添加联系人</button>
+                      </span>
+                </div>
+            </div>
+
+
+         <div class="row" style="height: 610px;">
+                <div class="col-sm-12">
+
+                  <table class="table table-hover table-bordered dataTable" id="linkmantable" role="grid">
+
+                    <!-- 标题行 -->
+                    <thead>
+                    <tr role="row">
+                      <th class="text-center" rowspan="1" colspan="1" style="">ID</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">姓名</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">邮箱地址</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">部门</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for each_linkman in all_linkman.object_list %}
+                      <tr class="gradeX {% if forloop.counter|divisibleby:'2' %}odd{% else %}even{% endif %}"
+                          role="row">
+                        <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ each_linkman.name }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ each_linkman.email }}</td>
+                        <td class="text-center" style="vertical-align: middle;">{{ each_linkman.depart }}</td>
+                        <td class="text-center" style="vertical-align: middle;">
+                            <a class="btn btn-info" data-toggle="modal" data-target="#EditLinkmanModal{{ each_linkman.id }}">编辑</a>
+                            <a class="btn btn-danger" data-toggle="modal" data-target="#DeleteLinkmanModal{{ each_linkman.id }}">删除</a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+
+                    </tbody>
+                  </table>
+
+
+
+                </div>
+              </div>
+            </div>
+
+            <!-- 页码 -->
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <ul class="pagination">
+                  <!-- 上一页 -->
+                  {% if all_linkman.has_previous %}
+                    <li class="long"><a href="?{{ all_linkman.previous_page_number.querystring }}">上一页</a></li>
+                  {% endif %}
+                  <!-- 页码 -->
+                  {% for page in all_linkman.pages %}
+                    {% if page %}
+                      {% ifequal page all_linkman.number %}
+                        <li class="active"><a href="?page={{ page }}">{{ page }}<span
+                                class="sr-only">(current)</span></a></li>
+                      {% else %}
+                        <li><a href="?{{ page.querystring }}">{{ page }}<span class="sr-only"></span></a></li>
+                      {% endifequal %}
+                    {% else %}
+                      <li><a href="">...<span class="sr-only"></span></a></li>
+                    {% endif %}
+                  {% endfor %}
+                  <!-- 下一页 -->
+                  {% if all_linkman.has_next %}
+                    <li><a href="?{{ all_linkman.next_page_number.querystring }}">下一页<span class="sr-only"></span></a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+{% endblock content %}
+
+
+
+{% block script %}
+        <!-- 添加框 -->
+
+        <div class="modal fade" id="AddLinkmanModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">新联系人</h4>
+              </div>
+              <div class="modal-body">
+                 <div class="row" id="modal.flashes"></div>
+                  <form method="post" id="js_addLinkmanForm">
+                      <label class="control-label" for="name">姓名:</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="姓名" id="name" autofocus />
+                    </div>
+                    <label class="control-label" for="email">邮箱地址:</label>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="邮箱" id="email" required />
+                    </div>
+                    <label class="control-label" for="depart">部门:</label>
+                    <div class="form-group">
+                        <select name="depart" id="depart" class="selectpicker form-control" >
+                            {% for each_department in departments %}
+                                <option value="{{ each_department.id }}">{{ each_department.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                  </form>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="js_addLinkman">保存</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+        <!-- 编辑 -->
+        {% for each_linkman in all_linkman.object_list %}
+        <div class="modal fade" id="EditLinkmanModal{{ each_linkman.id }}">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">编辑联系人</h4>
+              </div>
+              <div class="modal-body">
+                 <div class="row" id="modal.flashes"></div>
+                  <form method="post" id="js_editLinkmanForm{{ each_linkman.id }}">
+                      <label class="control-label" for="name">姓名:</label>
+                    <div class="form-group">
+                        <input value="{{ each_linkman.name }}" type="text" class="form-control" placeholder="姓名" id="editname" autofocus />
+                    </div>
+                    <label class="control-label" for="email">邮箱地址:</label>
+                    <div class="form-group">
+                        <input value="{{ each_linkman.email }}" type="text" class="form-control" placeholder="邮箱" id="editemail" required />
+                    </div>
+                    <label class="control-label" for="depart">部门:</label>
+                    <div class="form-group">
+                        <select name="depart" id="editdepart" class="selectpicker form-control" >
+                            {% for each_department in departments %}
+                                <option value="{{ each_department.id }}"
+                                        {% ifequal each_linkman.depart.id each_department.id %}selected{% endifequal %}>
+                                    {{ each_department.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                  </form>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="js_editLinkman{{ each_linkman.id }}">保存</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+
+        <!-- 删除 -->
+        <div class="modal fade modal-warning" id="DeleteLinkmanModal{{ each_linkman.id }}">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">删除联系人</h4>
+              </div>
+              <div class="modal-body">
+                 <div class="row" id="modal.flashes"></div>
+                  <form method="post" id="js_deleteLinkmanForm">
+                      <div class="form-group">
+                          <p>是否删除该联系人？</p>
+                      </div>
+                  </form>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-outline" id="js_deleteLinkman">确认</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+            </div>
+
+    </div>
+    </div>
+  </div>
+
+
+
+<script>
+    // 校验表单数据
+	check_name = function() {
+		var name = $('#name').val();
+		if (name == '') {
+			$('#name').removeClass("is-valid");
+			$('#name').addClass("is-invalid");
+			$('#name_error').text('姓名不能未空');
+			return false;
+		} else {
+			$('#name').removeClass("is-invalid");
+			$('#name').addClass("is-valid");
+			$('#name_error').text('');
+			return true;
+		};
+	}
+
+	check_email = function () {
+        var email = $('#email').val();
+        if (email == ''){
+            $('#email').removeClass("is-valid");
+            $('#email').addClass("is-invalid");
+            $('#email_error').text('邮箱不能为空');
+            return false;
+        } else {
+            $('#email').removeClass("is-invalid");
+            $('#email').addClass("is-valid");
+            $('#email_error').text('');
+            return true;
+        }
+    }
+
+//添加
+      $(function () {
+          // 提交表单
+          $('#js_addLinkman').on('click', function () {
+              var email = $('#email').val();
+              var depart = $('#depart').val();
+              var name = $('#name').val();
+              toastr.options = {
+                closeButton: false,
+                debug: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                onclick: null,
+                showDuration: "300",
+                hideDuration: "1000",
+                timeOut: "5000",
+                extendedTimeOut: "1000",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+              };
+              $.ajax({
+                  cache: false,
+                  type: "POST",
+                  url: "{% url 'contacts:add_linkman' %}",
+                  dataType: 'json',
+                  data: {
+                      'name':name,
+                      'email':email,
+                      'depart':depart
+                  },
+                  async: true,
+                  beforeSend: function (xhr, settings) {
+                      // 这里需要csrf_token的值，而不是代码
+                      xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                  },
+                  success: function (data) {
+                      if (data.status == 'success') {
+                          toastr.options.timeOut = 1000;
+                          toastr.options.onHidden = function() { window.location.href = "{% url 'contacts:linkman_list' %}"; }
+                          toastr.success(data.msg);
+
+                      } else if (data.status == 'fail') {
+                          toastr.error(data.msg);
+                      }
+                  }
+              });
+          });
+      });
+
+//编辑
+    $(function () {
+          // 提交表单
+          $('#js_editLinkman{{ each_linkman.id }}').on('click', function () {
+              var editemail = $('#editemail').val();
+              var editdepart = $('#editdepart').val();
+              var editname = $('#editname').val();
+              toastr.options = {
+                closeButton: false,
+                debug: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                onclick: null,
+                showDuration: "300",
+                hideDuration: "1000",
+                timeOut: "5000",
+                extendedTimeOut: "1000",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+              };
+              $.ajax({
+                  cache: false,
+                  type: "POST",
+                  url: "{% url 'contacts:edit_linkman' each_linkman.id %}",
+                  dataType: 'json',
+                  //data: $('#js_editLinkmanForm{{ each_linkman.id }}').serialize(),
+                  data:{
+                      'name': editname,
+                      'email': editemail,
+                      'depart': editdepart,
+                  },
+                  async: true,
+                  beforeSend: function (xhr, settings) {
+                      // 这里需要csrf_token的值，而不是代码
+                      xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                  },
+                  success: function (data) {
+                      if (data.status == 'success') {
+                          toastr.options.timeOut = 1000;
+                          toastr.options.onHidden = function() { window.location.href = "{% url 'contacts:linkman_list' %}"; }
+                          toastr.success(data.msg);
+
+                      } else if (data.status == 'fail') {
+                          toastr.error(data.msg);
+                      }
+                  }
+              });
+          });
+      });
+</script>
+{% endfor %}
+<link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
+    <script src="{% static 'toastr/toastr.min.js' %}"></script>
+
+<script src="{% static 'adminlet-2.4.10/bower_components/datatables.net/js/jquery.dataTables.js' %}"></script>
+<script src="{% static 'adminlet-2.4.10/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
+
+{% endblock script %}

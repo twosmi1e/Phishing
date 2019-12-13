@@ -1506,7 +1506,7 @@
 			 */
 			this.calculateYRange(cachedHeight);
 
-			// With these properties set we can now build the array of yLabels
+			// With these properties set we can now toastr the array of yLabels
 			// and also the width of the largest yLabel
 			this.buildYLabels();
 

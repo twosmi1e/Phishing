@@ -1157,7 +1157,7 @@
 				_fnColumnOptions( oSettings, iCol, oDef );
 			} );
 			
-			/* HTML5 attribute detection - build an mData object automatically if the
+			/* HTML5 attribute detection - toastr an mData object automatically if the
 			 * attributes are found
 			 */
 			if ( rowOne.length ) {
@@ -11567,7 +11567,7 @@
 	
 	
 			/**
-			 * DataTables has a build in number formatter (`formatNumber`) which is
+			 * DataTables has a toastr in number formatter (`formatNumber`) which is
 			 * used to format large numbers that are used in the table information.
 			 * By default a comma is used, but this can be trivially changed to any
 			 * character you wish with this parameter.
@@ -13850,7 +13850,7 @@
 	 * DataTables extensions
 	 * 
 	 * This namespace acts as a collection area for plug-ins that can be used to
-	 * extend DataTables capabilities. Indeed many of the build in methods
+	 * extend DataTables capabilities. Indeed many of the toastr in methods
 	 * use this method to provide their own capabilities (sorting methods for
 	 * example).
 	 *
@@ -13881,7 +13881,7 @@
 	
 	
 		/**
-		 * DataTables build type (expanded by the download builder)
+		 * DataTables toastr type (expanded by the download builder)
 		 *
 		 *  @type string
 		 */

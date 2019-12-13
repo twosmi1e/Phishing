@@ -96,28 +96,28 @@ module.exports = function(grunt){
                 options: {
                     sourceMapURL: '<%= pkg.name %>.standalone.css.map'
                 },
-                src: 'build/build_standalone.less',
+                src: 'toastr/build_standalone.less',
                 dest: 'dist/css/<%= pkg.name %>.standalone.css'
             },
             standalone_bs3: {
                 options: {
                     sourceMapURL: '<%= pkg.name %>3.standalone.css.map'
                 },
-                src: 'build/build_standalone3.less',
+                src: 'toastr/build_standalone3.less',
                 dest: 'dist/css/<%= pkg.name %>3.standalone.css'
             },
             main_bs2: {
                 options: {
                     sourceMapURL: '<%= pkg.name %>.css.map'
                 },
-                src: 'build/build.less',
+                src: 'toastr/toastr.less',
                 dest: 'dist/css/<%= pkg.name %>.css'
             },
             main_bs3: {
                 options: {
                     sourceMapURL: '<%= pkg.name %>3.css.map'
                 },
-                src: 'build/build3.less',
+                src: 'toastr/build3.less',
                 dest: 'dist/css/<%= pkg.name %>3.css'
             }
         },

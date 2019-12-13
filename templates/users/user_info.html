@@ -10,12 +10,12 @@
 
 <!----------------------------------------------------- 其他css -------------------------------------------------------->
 {% block other_css %}
-  <script src="{% static 'bootstrap_date/jquery-2.1.1.js' %}"></script>
+
 {% endblock other_css %}
 
 
 <!----------------------------------------------------- 内容主体 -------------------------------------------------------->
-{% block center_content %}
+{% block content %}
   <div class="col">
     <p style="padding-top: 2px;"></p>
 
@@ -157,7 +157,7 @@
                         <div class="col-md-9">
                           <input type="text" name="nick_name" value="{{ request.user.nick_name }}" maxlength="20"
                                  class="form-control"
-                                 placeholder="名称" required="" id="id_nick_name" readonly="readonly">
+                                 placeholder="姓名" required="" id="id_nick_name" readonly="readonly">
                         </div>
                       </div>
 
@@ -198,15 +198,13 @@
       </div>
     </div>
   </div>
-{% endblock center_content %}
+{% endblock content %}
 
 
 
 <!----------------------------------------------------- 其他js --------------------------------------------------------->
-{% block other_js %}
-  <script src="{% static 'bootstrap_date/moment-with-locales.min.js' %}"></script>
-  <link href="{% static 'bootstrap_date/bootstrap-datetimepicker.min.css' %}" rel="stylesheet">
-  <script src="{% static 'bootstrap_date/bootstrap-datetimepicker.min.js' %}"></script>
+{% block script %}
+
 
   <script>
       $(function () {
@@ -307,4 +305,4 @@
           alert('个人资料修改失败!');
       }
   </script>
-{% endblock other_js %}
+{% endblock script %}

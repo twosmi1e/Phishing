@@ -250,6 +250,26 @@ desired effect
                   </span>
               </a>
           </li>
+      <!-- 邮件地址 -->
+          <li class="treeview" {% ifequal web_title '' %}class="active"{% endifequal %}>
+              <a href="#">
+                  <i class="fa fa-book"></i><span>目标管理</span>
+                  <span class="pull-right-container">
+                      <i class="fa fa-angle-left pull-right"></i>
+                  </span>
+              </a>
+              <ul class="treeview-menu">
+                  <li>
+                    <a href="{% url 'contacts:linkman_list' %}"><i class="fa fa-circle-o"></i>联系人管理</a>
+                  </li>
+                  <li>
+                    <a href="{% url 'contacts:depart_list' %}"><i class="fa fa-circle-o"></i>部门管理</a>
+                  </li>
+                  <li>
+                    <a href="{% url 'contacts:group_list' %}"><i class="fa fa-circle-o"></i>分组管理</a>
+                  </li>
+              </ul>
+          </li>
       <!-- 任务 -->
           <li class="treeview" style="height: auto" {% ifequal web_title '' %}class="active"{% endifequal %}>
               <a href="#">
@@ -258,6 +278,14 @@ desired effect
                       <i class="fa fa-angle-left pull-right"></i>
                   </span>
               </a>
+              <ul class="treeview-menu">
+                  <li>
+                      <a href="#"><i class="fa fa-circle-o"></i>任务列表</a>
+                  </li>
+                  <li>
+                      <a href="#"><i class="fa fa-circle-o"></i>新建任务</a>
+                  </li>
+              </ul>
           </li>
       <!-- 邮件模板 -->
           <li class="treeview" style="height: auto">
@@ -267,6 +295,11 @@ desired effect
                       <i class="fa fa-angle-left pull-right"></i>
                   </span>
               </a>
+              <ul class="treeview-menu">
+                  <li>
+                      <a href="#"><i class="fa fa-circle-o"></i>模板管理</a>
+                  </li>
+              </ul>
           </li>
       <!-- 钓鱼页面 -->
           <li class="treeview" style="height: auto">
@@ -287,19 +320,22 @@ desired effect
               </a>
           </li>
       <!-- 用户 -->
-          <li class="treeview" style="height: auto" {% ifequal web_func 'user' %}class="active"{% endifequal %}>
-              <a herf="{% url 'users:user_list' %}">
+          <li class="treeview" style="height: auto" {% ifequal web_title 'user' %}class="active"{% endifequal %}>
+              <a herf="#">
                   <i class="fa fa-user"></i><span>用户管理</span>
                   <span class="pull-right-container">
                       <i class="fa fa-angle-left pull-right"></i>
                   </span>
               </a>
-              <ul class="nav treeview-menu" style="display: block">
+              <ul class="treeview-menu">
                 <li>
-                    <a href="{% url 'users:user_list' %}"><span>用户列表</span></a>
+                    <a href="{% url 'users:user_list' %}"><i class="fa fa-circle-o"></i>用户列表</a>
                 </li>
                 <li>
-                    <a href="#"><span>登录记录</span></a>
+                    <a href="{% url 'users:login_record' %}"><i class="fa fa-circle-o"></i>登录记录</a>
+                </li>
+                <li>
+                    <a href="{% url 'users:user_info' %}"><i class="fa fa-circle-o"></i>资料修改</a>
                 </li>
               </ul>
           </li>
@@ -331,10 +367,10 @@ desired effect
   <footer class="main-footer">
     <!-- To the right -->
     <div class="pull-right hidden-xs">
-      v1.0
+      v0.1
     </div>
     <!-- Default to the left -->
-    <strong>Copyright &copy; 2019 <a href="#" target="_blank">Phishing | @twosmi1e</a>.</strong> All rights reserved.
+    <strong>Copyright &copy; 2019 <a href="https://www.twosmi1e.com/" target="_blank">Phishing | @twosmi1e</a>.</strong> All rights reserved.
   </footer>
 
 
@@ -349,17 +385,27 @@ desired effect
 <script src="{% static 'adminlet-2.4.10/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static 'adminlet-2.4.10/dist/js/adminlte.min.js' %}"></script>
-
+<script src="{% static 'adminlet-2.4.10/bower_components/fastclick/lib/fastclick.js' %}"></script>
 {% block script %}{% endblock %}
 
 <script>
-    $('ul.sidebar-menu li').each(function(i){
-        if($(this).children().first().attr('href')==='{{ request.path }}'){
-            $(this).addClass('active');
-        }else{
-        }
+    $(function(){
+    $('.sidebar-menu li:not(.treeview) > a').on('click', function(){
+        var $parent = $(this).parent().addClass('active');
+        $parent.siblings('.treeview.active').find('> a').trigger('click');
+        $parent.siblings().removeClass('active').find('li').removeClass('active');
     });
+
+    $(window).on('load', function(){
+        $('.sidebar-menu a').each(function(){
+            if(this.href === window.location.href){
+                $(this).parent().addClass('active')
+                    .closest('.treeview-menu').addClass('.menu-open')
+                    .closest('.treeview').addClass('active');
+            }
+        });
+    });
+});
 </script>
 </body>
 </html>
-

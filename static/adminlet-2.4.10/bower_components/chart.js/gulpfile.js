@@ -16,7 +16,7 @@ var gulp = require('gulp'),
 
 var srcDir = './src/';
 /*
- *	Usage : gulp build --types=Bar,Line,Doughnut
+ *	Usage : gulp toastr --types=Bar,Line,Doughnut
  *	Output: - A built Chart.js file with Core and types Bar, Line and Doughnut concatenated together
  *			- A minified version of this code, in Chart.min.js
  */
@@ -73,7 +73,7 @@ gulp.task('bump', function(complete){
 		package.version = newVersion;
 		bower.version = newVersion;
 
-		// Write these to their own files, then build the output
+		// Write these to their own files, then toastr the output
 		fs.writeFileSync('package.json', JSON.stringify(package, null, 2));
 		fs.writeFileSync('bower.json', JSON.stringify(bower, null, 2));
 

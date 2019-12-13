@@ -15,13 +15,17 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.conf.urls import url, include
+from django.conf.urls.static import static
+from django.urls import path, include
 
 
 urlpatterns = [
     # admin
-    url(r'^admin/', admin.site.urls),
+    path('admin/', admin.site.urls),
     # 用户url入口
-    url(r'', include('users.urls')),
+    path('', include('users.urls', namespace='users')),
     # 验证码
-    url(r'^captcha/', include('captcha.urls')),
+    path('captcha/', include('captcha.urls')),
+    # 联系人
+    path('contacts/', include('contacts.urls', namespace='contacts'))
 ]

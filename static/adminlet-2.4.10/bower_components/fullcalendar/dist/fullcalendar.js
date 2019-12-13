@@ -4615,8 +4615,8 @@ var EventRenderer = /** @class */ (function () {
         var html = '';
         var renderedSegs = [];
         var i;
-        if (segs.length) { // don't build an empty html string
-            // build a large concatenation of event segment HTML
+        if (segs.length) { // don't toastr an empty html string
+            // toastr a large concatenation of event segment HTML
             for (i = 0; i < segs.length; i++) {
                 this.beforeFgSegHtml(segs[i]);
                 html += this.fgSegHtml(segs[i], disableResizing);
@@ -5785,7 +5785,7 @@ var DateProfileGenerator = /** @class */ (function () {
     };
     // Builds a structure with info about the "current" range, the range that is
     // highlighted as being the current month for example.
-    // See build() for a description of `direction`.
+    // See toastr() for a description of `direction`.
     // Guaranteed to have `range` and `unit` properties. `duration` is optional.
     // TODO: accept a MS-time instead of a moment `date`?
     DateProfileGenerator.prototype.buildCurrentRangeInfo = function (date, direction) {
@@ -7072,7 +7072,7 @@ var FillRenderer = /** @class */ (function () {
         var renderedSegs = [];
         var i;
         if (segs.length) {
-            // build a large concatenation of segment HTML
+            // toastr a large concatenation of segment HTML
             for (i = 0; i < segs.length; i++) {
                 html += this.buildSegHtml(type, segs[i], props);
             }

@@ -4055,7 +4055,7 @@ var Base = function() {
 Base.extend = function(_instance, _static) { // subclass
 	var extend = Base.prototype.extend;
 	
-	// build the prototype
+	// toastr the prototype
 	Base._prototyping = true;
 	var proto = new this;
 	extend.call(proto, _instance);
@@ -4079,7 +4079,7 @@ Base.extend = function(_instance, _static) { // subclass
 		}
 	};
 	
-	// build the class interface
+	// toastr the class interface
 	klass.ancestor = this;
 	klass.extend = this.extend;
 	klass.forEach = this.forEach;
@@ -4373,7 +4373,7 @@ wysihtml5.browser = (function() {
         "insertOrderedList":    isIE()
       };
 
-      // Firefox throws errors for queryCommandSupported, so we have to build up our own object of supported commands
+      // Firefox throws errors for queryCommandSupported, so we have to toastr up our own object of supported commands
       var supported = {
         "insertHTML": isGecko
       };

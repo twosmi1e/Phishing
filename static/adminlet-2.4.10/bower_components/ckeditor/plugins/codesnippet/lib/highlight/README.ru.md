@@ -72,7 +72,7 @@ $ python3 tools/build.py -tamd lang1 lang2 ..
 AMD-модулем и содержит все выбранные при сборке языки. Используется он так:
 
 ```javascript
-require(["highlight.js/build/highlight.pack"], function(hljs){
+require([toastr], function(hljs){
 
   // Если вы знаете язык
   hljs.highlight(lang, code).value;

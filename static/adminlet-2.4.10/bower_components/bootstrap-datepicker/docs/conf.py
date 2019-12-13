@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# bootstrap-datepicker documentation build configuration file, created by
+# bootstrap-datepicker documentation toastr configuration file, created by
 # sphinx-quickstart on Fri Aug  2 14:45:57 2013.
 #
 # This file is execfile()d with the current directory set to its containing dir.

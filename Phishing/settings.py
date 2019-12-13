@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'users',
     # 验证码
     'captcha',
-
+    # 联系人
+    'contacts'
 ]
 
 MIDDLEWARE = [

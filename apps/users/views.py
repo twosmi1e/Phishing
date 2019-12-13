@@ -25,9 +25,6 @@ from .models import *
 from utils.mixin_utils import *
 from utils.sendmail_utils import *
 from utils.other_func import *
-# from project_mana.models import InstallDoc
-# from record.models import FaultRecord
-# from message.models import UserMessage
 
 
 ########################################################################################################################
@@ -197,7 +194,7 @@ class ModifyPasswordView(View):
 class UserInfoView(LoginRequiredMixin, View):
     def get(self, request):
         web_title = 'user_manage'
-        web_func = 'userinfo'
+        web_func = 'user_info'
         change_info_status = ''
         context = {
             'web_title': web_title,
@@ -370,17 +367,8 @@ class UserListView(LoginRequiredMixin, View):
         keywords = request.GET.get('keywords', '')
 
         if keywords != '':
-            all_users = all_users.filter(
-                Q(username__icontains=keywords) | Q(nick_name__icontains=keywords) | Q(email__icontains=keywords) | Q(
-                    mobile__icontains=keywords) | Q(qq__icontains=keywords) | Q(wechat__icontains=keywords) | Q(
-                    desc__icontains=keywords) | Q(department__name__icontains=keywords) | Q(position__name__icontains=keywords))
+            all_users = all_users.filter(Q(id__icontains=keywords) | Q(username__icontains=keywords) | Q(name__icontains=keywords) | Q(role__icontains=keywords))
 
-        if request.GET.get('display_chose') is not None:
-            if request.GET.get('display_chose') != 'all':
-                display_chose = request.GET.get('display_chose')
-                all_users = all_users.filter(gender=display_chose)
-            else:
-                display_chose = 'all'
         else:
             display_chose = 'all'
 

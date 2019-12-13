@@ -69,7 +69,7 @@ module.exports = function (grunt) {
       },
       dev: {
         files:  'lib/*.coffee' ,
-        tasks: ['concat:build/morris.coffee', 'coffee:lib']
+        tasks: ['concat:toastr/morris.coffee', 'coffee:lib']
       }
     },
     shell: {

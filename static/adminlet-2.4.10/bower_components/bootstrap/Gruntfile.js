@@ -401,14 +401,14 @@ module.exports = function (grunt) {
   // Default task.
   grunt.registerTask('default', ['clean:dist', 'copy:fonts', 'test']);
 
-  grunt.registerTask('build-glyphicons-data', function () {
+  grunt.registerTask('toastr-glyphicons-data', function () {
     generateGlyphiconsData.call(this, grunt);
   });
 
   // task for building customizer
-  grunt.registerTask('build-customizer', ['build-customizer-html', 'build-raw-files']);
-  grunt.registerTask('build-customizer-html', 'pug');
-  grunt.registerTask('build-raw-files', 'Add scripts/less files to customizer.', function () {
+  grunt.registerTask('toastr-customizer', ['toastr-customizer-html', 'toastr-raw-files']);
+  grunt.registerTask('toastr-customizer-html', 'pug');
+  grunt.registerTask('toastr-raw-files', 'Add scripts/less files to customizer.', function () {
     var banner = grunt.template.process('<%= banner %>');
     generateRawFiles(grunt, banner);
   });
@@ -424,7 +424,7 @@ module.exports = function (grunt) {
   grunt.registerTask('lint-docs-css', ['stylelint:docs', 'stylelint:examples']);
   grunt.registerTask('docs-js', ['uglify:docs', 'uglify:customize']);
   grunt.registerTask('lint-docs-js', ['jshint:assets', 'jscs:assets']);
-  grunt.registerTask('docs', ['docs-css', 'lint-docs-css', 'docs-js', 'lint-docs-js', 'clean:docs', 'copy:docs', 'build-glyphicons-data', 'build-customizer']);
+  grunt.registerTask('docs', ['docs-css', 'lint-docs-css', 'docs-js', 'lint-docs-js', 'clean:docs', 'copy:docs', 'toastr-glyphicons-data', 'toastr-customizer']);
 
   grunt.registerTask('prep-release', ['dist', 'docs', 'jekyll:github']);
 };

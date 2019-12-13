@@ -1,4 +1,4 @@
-{% extends 'web_base.html' %}
+{% extends 'base.html' %}
 {% load staticfiles %}
 
 <!-- 标题 -->
@@ -7,7 +7,7 @@
 {% endblock title %}
 
 <!-- 内容主体 -->
-{% block center_content %}
+{% block content %}
   <div class="col">
     <p style="height: 2px;"></p>
     <!-- 中间栏 -->
@@ -52,7 +52,7 @@
                       <th class="text-center" rowspan="1" colspan="1" style="width: 114px;">姓名</th>
                       <th class="text-center" rowspan="1" colspan="1" style="width: 171px;">客户端</th>
                       <th class="text-center" rowspan="1" colspan="1" style="width: 148px;">IP地址</th>
-                      <th class="text-center" rowspan="1" colspan="1" style="width: 80px;">城市</th>
+{#                      <th class="text-center" rowspan="1" colspan="1" style="width: 80px;">城市</th>#}
                       <th class="text-center" rowspan="1" colspan="1" style="width: 184px;">日期</th>
                     </tr>
                     </thead>
@@ -65,7 +65,7 @@
                         <td class="text-center" style="vertical-align : middle;">{{ each_record.user.nick_name }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ each_record.agent|slice:'35' }}...</td>
                         <td class="text-center" style="vertical-align : middle;">{{ each_record.ip }}</td>
-                        <td class="text-center" style="vertical-align : middle;">{{ each_record.city }}</td>
+{#                        <td class="text-center" style="vertical-align : middle;">{{ each_record.city }}</td>#}
                         <td class="text-center" style="vertical-align : middle;">{{ each_record.add_time }}</td>
                       </tr>
                     {% endfor %}
@@ -112,4 +112,4 @@
       </div>
     </div>
   </div>
-{% endblock center_content %}
+{% endblock content %}

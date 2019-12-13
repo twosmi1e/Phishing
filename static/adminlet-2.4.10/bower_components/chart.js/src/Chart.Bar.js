@@ -97,7 +97,7 @@
 				ctx : this.chart.ctx
 			});
 
-			//Iterate through each of the datasets, and build this into a property of the chart
+			//Iterate through each of the datasets, and toastr this into a property of the chart
 			helpers.each(data.datasets,function(dataset,datasetIndex){
 
 				var datasetObject = {

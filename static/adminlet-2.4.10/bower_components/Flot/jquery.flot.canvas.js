@@ -234,7 +234,7 @@ browser, but needs to redraw with canvas text when exporting as an image.
 				context.font = textStyle;
 
 				// Canvas can't handle multi-line strings; break on various
-				// newlines, including HTML brs, to build a list of lines.
+				// newlines, including HTML brs, to toastr a list of lines.
 				// Note that we could split directly on regexps, but IE < 9 is
 				// broken; revisit when we drop IE 7/8 support.
 

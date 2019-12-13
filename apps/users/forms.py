@@ -49,6 +49,7 @@ class ResetPasswordForm(forms.Form):
 class ChangeUserInfoForm(forms.Form):
 
     username = forms.CharField(max_length=20, required=True)
+    name = forms.CharField(max_length=20, required=True)
     role = forms.CharField(max_length=20, required=True)
 
 
