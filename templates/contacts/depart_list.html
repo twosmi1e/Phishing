@@ -60,8 +60,8 @@
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ each_depart.name }}</td>
                         <td class="text-center" style="vertical-align: middle;">
-                            <button class="btn btn-info" id="edit">编辑</button>
-                            <button class="btn btn-danger" id="delete">删除</button>
+                            <button class="btn btn-info" data-toggle="modal" data-target="#EditDepartModal{{ each_depart.id }}">编辑</button>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteDepartModal{{ each_depart.id }}">删除</button>
                         </td>
                       </tr>
                     {% endfor %}
@@ -104,7 +104,18 @@
                 </ul>
               </div>
             </div>
-        <!-- 添加框 -->
+
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+{% endblock content %}
+{% block script %}
+    <!-- 添加框 -->
 
         <div class="modal fade" id="AddDepartModal">
           <div class="modal-dialog">
@@ -134,45 +145,6 @@
           <!-- /.modal-dialog -->
         </div>
         <!-- /.modal -->
-        <!-- 编辑框 -->
-        <div class="modal fade" id="EditDepartModal">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">编辑</h4>
-              </div>
-              <div class="modal-body">
-                 <div class="row" id="modal.flashes"></div>
-                  <form method="post" id="js_addDepartForm">
-                      <label class="control-label" for="name">部门名:</label>
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="部门名" id="name" autofocus />
-                    </div>
-                  </form>
-
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="js_editDepart">保存</button>
-              </div>
-            </div>
-            <!-- /.modal-content -->
-          </div>
-          <!-- /.modal-dialog -->
-        </div>
-        <!-- /.modal -->
-
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-
-{% endblock content %}
-{% block script %}
 <script>
 
       $(function () {
@@ -220,15 +192,134 @@
               });
           });
       });
-      
-      
-      
-      $(function () {
-
-      })
-
+</script>
+     <!-- 编辑框 -->
+    {% for depart in departments.object_list %}
+        <div class="modal fade" id="EditDepartModal{{ depart.id }}">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">编辑</h4>
+              </div>
+            <form id="js_editDepartForm{{ depart.id }}">
+              <div class="modal-body">
+                 <div class="row" id="modal.flashes"></div>
+                  <label class="control-label" for="name">部门名:</label>
+                  <div class="form-group">
+                      <input type="text" class="form-control" placeholder="部门名" value="{{ depart.name }}" name="name" />
+                  </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="js_editDepart{{ depart.id }}">保存</button>
+              </div>
+            </form>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+<script>
+    //编辑
+    $(function () {
+        //提交表单
+        $('#js_editDepart{{ depart.id }}').on('click', function () {
+            toastr.options = {
+                closeButton: false,
+                debug: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                onclick: null,
+                showDuration: "300",
+                hideDuration: "1000",
+                timeOut: "1000",
+                extendedTimeOut: "1000",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+            };
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'contacts:edit_depart' depart.id %}",
+                data: $('#js_editDepartForm{{ depart.id }}').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                  // 这里需要csrf_token的值，而不是代码
+                  xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                  if (data.status == 'success') {
+                      toastr.options.timeOut = 1000;
+                      toastr.options.onHidden = function() { window.location.href = "{% url 'contacts:depart_list' %}"; }
+                      toastr.success(data.msg);
+                  } else if (data.status == 'fail') {
+                      toastr.error(data.msg);
+                  }
+                }
+            });
+        })
+    })
 </script>
 
+    <!-- 删除 -->
+    <div class="modal fade modal-warning" id="DeleteDepartModal{{ depart.id }}">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">删除部门</h4>
+          </div>
+          <div class="modal-body">
+             <div class="row" id="modal.flashes"></div>
+              <form method="post" id="js_deleteDepartForm{{ depart.id }}">
+                  <div class="form-group">
+                      <p>是否删除该部门？</p>
+                  </div>
+              </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-outline" id="js_deleteDepart{{ depart.id }}">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<script>
+    //删除
+    $(function () {
+        $('#js_deleteDepart{{ depart.id }}').on('click', function () {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'contacts:del_depart' depart.id %}",
+                data: $('#js_deleteDepartForm{{ depart.id }}').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    // 这里需要csrf_token的值，而不是代码
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.options.timeOut = 1000;
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'contacts:depart_list' %}"; }
+                        toastr.success(data.msg);
+                    } else if (data.status == 'fail') {
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+        });
+    })
+</script>
+    {% endfor %}
 
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
     <script src="{% static 'toastr/toastr.min.js' %}"></script>

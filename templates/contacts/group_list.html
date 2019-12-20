@@ -60,8 +60,8 @@
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ each_group.name }}</td>
                         <td class="text-center" style="vertical-align: middle;">
-                            <button class="btn btn-info">编辑</button>
-                            <button class="btn btn-danger">删除</button>
+                            <button class="btn btn-info" data-toggle="modal">编辑</button>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteGroupModal{{ each_group.id }}">删除</button>
                         </td>
                       </tr>
                     {% endfor %}
@@ -104,36 +104,7 @@
                 </ul>
               </div>
             </div>
-        <!-- 添加框 -->
 
-        <div class="modal fade" id="AddGroupModal">
-          <div class="modal-dialog">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title">新分组</h4>
-              </div>
-              <div class="modal-body">
-                 <div class="row" id="modal.flashes"></div>
-                  <form method="post" id="js_addGroupForm">
-                      <label class="control-label" for="name">部门名:</label>
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="部门名" id="name" autofocus />
-                    </div>
-                  </form>
-
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
-                <button type="button" class="btn btn-primary" id="js_addDepart">保存</button>
-              </div>
-            </div>
-            <!-- /.modal-content -->
-          </div>
-          <!-- /.modal-dialog -->
-        </div>
-        <!-- /.modal -->
 
 
           </div>
@@ -145,13 +116,88 @@
 
 {% endblock content %}
 {% block script %}
+ <!-- 添加框 -->
+
+        <div class="modal fade" id="AddGroupModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">新分组</h4>
+              </div>
+                <form method="post" id="js_addGroupForm">
+                  <div class="modal-body">
+                      <div class="row" id="modal.flashes"></div>
+                      <div class="form-group">
+                          <label class="control-label" for="name">新分组:</label>
+                          <input type="text" class="form-control" placeholder="组名" id="name" autofocus />
+                      </div>
+                      <div class="form-group">
+                          <label for="group_members">人员:</label>
+                          <div id="container" style="width: 90%;height: 90%;">
+                            <div class="row">
+                                <div class="col-xs-5">
+                                    <select name="from[]" id="search" class="form-control" size="8" multiple="multiple">
+                                        {% for linkman in linkmen %}
+                                        <option value="{{ linkman.id }}">{{ linkman.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-xs-2">
+                                    <button type="button" id="search_rightAll" class="btn btn-block"><i class="glyphicon glyphicon-forward"></i></button>
+                                    <button type="button" id="search_rightSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-right"></i></button>
+                                    <button type="button" id="search_leftSelected" class="btn btn-block"><i class="glyphicon glyphicon-chevron-left"></i></button>
+                                    <button type="button" id="search_leftAll" class="btn btn-block"><i class="glyphicon glyphicon-backward"></i></button>
+                                </div>
+
+                                <div class="col-xs-5">
+                                    <select name="to[]" id="search_to" class="form-control" size="8" multiple="multiple"></select>
+                                </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="js_addGroup">保存</button>
+                  </div>
+                </form>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
 <script>
+jQuery(document).ready(function($) {
+    $('#search').multiselect({
+        search: {
+            left: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+            right: '<input type="text" name="q" class="form-control" placeholder="Search..." />',
+        },
+        fireSearch: function(value) {
+            return value.length > 3;
+        }
+    });
+});
+
 
       $(function () {
           // 提交表单
-          $('#js_addDepart').on('click', function () {
+          $('#js_addGroup').on('click', function () {
               var name = $('#name').val();
-             // if (check_email() == false || check_name() == false):
+              var options = $('#search_to option');
+              var members = new Array();
+              var i;
+
+              for(i=0;i<options.length;i++){
+                  members.push(options[i].value);
+              }
+              //console.log(members);
+
               toastr.options = {
                 closeButton: false,
                 debug: false,
@@ -170,10 +216,12 @@
               $.ajax({
                   cache: false,
                   type: "POST",
-                  url: "{% url 'contacts:add_depart' %}",
+                  url: "{% url 'contacts:add_group' %}",
                   dataType: 'json',
+                  //data: $('#js_addGroupForm').serialize(),
                   data: {
-                      'name':name,
+                    'name': name,
+                    'members': members,
                   },
                   async: true,
                   beforeSend: function (xhr, settings) {
@@ -183,7 +231,7 @@
                   success: function (data) {
                       if (data.status == 'success') {
                           toastr.options.timeOut = 1000;
-                          toastr.options.onHidden = function() { window.location.href = "{% url 'contacts:depart_list' %}"; }
+                          toastr.options.onHidden = function() { window.location.href = "{% url 'contacts:group_list' %}"; }
                           toastr.success(data.msg);
                       } else if (data.status == 'fail') {
                           toastr.error(data.msg);
@@ -192,13 +240,69 @@
               });
           });
       })
-
 </script>
+
+<!-- 删除 -->
+    {% for group in groups.object_list %}
+    <div class="modal fade modal-warning" id="DeleteGroupModal{{ group.id }}">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">删除分组</h4>
+          </div>
+          <div class="modal-body">
+             <div class="row" id="modal.flashes"></div>
+              <form method="post" id="js_deleteGroupForm{{ group.id }}">
+                  <div class="form-group">
+                      <p>是否删除该部门？</p>
+                  </div>
+              </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-outline" id="js_deleteGroup{{ group.id }}">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+<script>
+    //删除
+    $(function () {
+        $('#js_deleteGroup{{ group.id }}').on('click', function () {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'contacts:del_group' group.id %}",
+                data: $('#js_deleteGroupForm{{ group.id }}').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    // 这里需要csrf_token的值，而不是代码
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.options.timeOut = 1000;
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'contacts:group_list' %}"; }
+                        toastr.success(data.msg);
+                    } else if (data.status == 'fail') {
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+        });
+    });
+</script>
+    {% endfor %}
 
 
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
-    <script src="{% static 'toastr/toastr.min.js' %}"></script>
+<script src="{% static 'toastr/toastr.min.js' %}"></script>
 <script src="{% static 'adminlet-2.4.10/bower_components/datatables.net/js/jquery.dataTables.js' %}"></script>
 <script src="{% static 'adminlet-2.4.10/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
-
+<script src="{% static 'multiselect/dist/js/multiselect.min.js' %}"></script>
 {% endblock script %}

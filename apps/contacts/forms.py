@@ -20,3 +20,4 @@ class AddDepartForm(forms.Form):
 
 class AddGroupForm(forms.Form):
     name = forms.CharField(max_length=20, required=True)
+    group_members = forms.ModelMultipleChoiceField(queryset=Linkman.objects.all())

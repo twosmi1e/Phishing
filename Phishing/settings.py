@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     # 验证码
     'captcha',
     # 联系人
-    'contacts'
+    'contacts',
+    # 邮件模板
+    'templets',
+    # 钓鱼页面
+    'pages',
 ]
 
 MIDDLEWARE = [

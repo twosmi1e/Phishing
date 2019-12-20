@@ -27,5 +27,9 @@ urlpatterns = [
     # 验证码
     path('captcha/', include('captcha.urls')),
     # 联系人
-    path('contacts/', include('contacts.urls', namespace='contacts'))
+    path('contacts/', include('contacts.urls', namespace='contacts')),
+    # 邮件模板
+    path('templets/', include('templets.urls', namespace='templets')),
+    # 钓鱼页面
+    path('pages/', include('pages.urls', namespace='pages')),
 ]

@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  钓鱼页面
+{% endblock title %}
+
+{% block css %}
+
+<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+{% endblock css %}
+
+<!-- 主体 -->
+{% block content %}
+  <div class="col">
+    <p style="height: 2px;"></p>
+    <!-- 中间栏 -->
+    <div class="padder">
+      <!-- 钓鱼页面 -->
+      <div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div style="border-left: 4px solid #003366; margin-bottom: 10px; margin-top: 10px; height: 25px;font-size: 18px;">
+              <span>&nbsp;&nbsp;钓鱼页面</span>
+            </div>
+          </div>
+          <div class="panel-body container" style="height: 745px;">
+            <div class="module-option clearfix">
+              <form class="navbar-form pull-left " role="search" method="get" style="margin-top: 0px;">
+                <div class="form-group">
+                  <div class="input-group">
+                    <input type="text" class="form-control input-sm bg-light no-border rounded" name="keywords"
+                           placeholder="关键词搜索" style="width: 150px;">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-sm bg-auto rounded"><i class="fa fa-search"></i></button>
+                      </span>
+                  </div>
+                </div>
+              </form>
+                <div class="navbar-btn pull-right" style="margin-top: 0px;width: 150px;">
+                    <span>
+                          <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#AddPageModal"><i class="fa fa-plus"></i> 添加页面</button>
+                      </span>
+                </div>
+            </div>
+
+
+         <div class="row" style="height: 610px;">
+                <div class="col-sm-12">
+
+                  <table class="table table-hover table-bordered dataTable" id="grouptable" role="grid">
+
+                    <!-- 标题行 -->
+                    <thead>
+                    <tr role="row">
+                      <th class="text-center" rowspan="1" colspan="1" style="">ID</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">页面名称</th>
+                      <th class="text-center" rowspan="1" colspan="1">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for page in pages.object_list %}
+                      <tr class="gradeX {% if forloop.counter|divisibleby:'2' %}odd{% else %}even{% endif %}"
+                          role="row">
+                        <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ page.name }}</td>
+                        <td class="text-center" style="vertical-align: middle;">
+                            <button class="btn btn-info">详情</button>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteTempletModal{{ page.id }}">删除</button>
+                        </td>
+                      </tr>
+                    {% endfor %}
+
+                    </tbody>
+                  </table>
+
+
+
+                </div>
+              </div>
+            </div>
+
+            <!-- 页码 -->
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <ul class="pagination">
+                  <!-- 上一页 -->
+                  {% if pages.has_previous %}
+                    <li class="long"><a href="?{{ pages.previous_page_number.querystring }}">上一页</a></li>
+                  {% endif %}
+                  <!-- 页码 -->
+                  {% for page in pages.pages %}
+                    {% if page %}
+                      {% ifequal page pages.number %}
+                        <li class="active"><a href="?page={{ page }}">{{ page }}<span
+                                class="sr-only">(current)</span></a></li>
+                      {% else %}
+                        <li><a href="?{{ page.querystring }}">{{ page }}<span class="sr-only"></span></a></li>
+                      {% endifequal %}
+                    {% else %}
+                      <li><a href="">...<span class="sr-only"></span></a></li>
+                    {% endif %}
+                  {% endfor %}
+                  <!-- 下一页 -->
+                  {% if pages.has_next %}
+                    <li><a href="?{{ pages.next_page_number.querystring }}">下一页<span class="sr-only"></span></a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+
+
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+{% endblock content %}
+{% block script %}
+
+<!-- 添加框 -->
+<div class="modal fade" id="AddPageModal">
+  <div class="modal-dialog" style="width: 1000px;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">添加钓鱼页面</h4>
+      </div>
+      <div class="modal-body">
+          <form method="post" id="js_addTempletForm">
+              <label class="control-label" for="name">页面名称:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="名称" name="name" />
+            </div>
+            <label class="control-label" for="redirect_url">跳转链接:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="可不填" name="redirect_url" />
+            </div>
+            <label class="control-label" for="html">HTML代码:</label>
+            <div class="form-group">
+                <textarea class="ckeditor" name="html"></textarea>
+            </div>
+              <!-- 设置编辑框高度 -->
+            <script>
+                CKEDITOR.replace('text', {
+                    height: 550,
+                });
+            </script>
+          </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="js_addTemplet">保存</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+
+<script>
+//添加按钮提交
+    $(function () {
+        //处理ckeditor的值
+        function CKupdate() {
+            for (instance in CKEDITOR.instances)
+                CKEDITOR.instances[instance].updateElement();
+        }
+
+        //提交表单
+        $('#js_addTemplet').on('click', function () {
+            CKupdate();
+            toastr.options = {
+                closeButton: false,
+                debug: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                onclick: null,
+                showDuration: "300",
+                hideDuration: "1000",
+                timeOut: "5000",
+                extendedTimeOut: "1000",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+            };
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'templets:add_templet' %}",
+                dataType: 'json',
+                data: $('#js_addTempletForm').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    // 这里需要csrf_token的值，而不是代码
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.options.timeOut = 1000;
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'templets:templet_list' %}"; }
+                        toastr.success(data.msg);
+                    } else if (data.status == 'fail') {
+                        toastr.options.timeOut = 1000;
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+        })
+    })
+</script>
+
+<link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
+<script src="{% static 'toastr/toastr.min.js' %}"></script>
+{% endblock script %}

@@ -6,10 +6,7 @@ from django.shortcuts import render
 ########################################################################################################################
 from django.shortcuts import render, HttpResponseRedirect
 from django.views import View
-from django.urls import reverse
 from django.http import HttpResponse
-from django.contrib.auth.hashers import make_password
-from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
 
 ########################################################################################################################
@@ -104,9 +101,22 @@ class EditLinkman(LoginRequiredMixin, View):
             linkman.email = request.POST.get('email')
             linkman.depart_id = request.POST.get('depart')
             linkman.save()
-            return HttpResponse('{"status:"success", "mag":"编辑成功!" "}', content_type='application/json')
+            return HttpResponse('{"status":"success", "msg":"编辑成功!"}', content_type='application/json')
 
-        return HttpResponse('{"status":"fail", "msg":"修改失败！"}', content_type='application/json')
+        return HttpResponse('{"status":"fail", "msg":"修改失败!"}', content_type='application/json')
+
+
+########################################################################################################################
+## 删除联系人
+########################################################################################################################
+class DeleteLinkman(LoginRequiredMixin, View):
+    def post(self, request, l_id):
+        try:
+            linkman = Linkman.objects.get(id=int(l_id))
+            linkman.delete()
+            return HttpResponse('{"status":"success", "msg":"删除成功"}', content_type='application/json')
+        except Exception as e:
+            return HttpResponse('{"status":"fail", "msg":"删除失败"}', content_type='application/json')
 
 ########################################################################################################################
 ## 部门列表视图
@@ -167,6 +177,35 @@ class AddDepart(LoginRequiredMixin, View):
 
 
 ########################################################################################################################
+## 编辑部门
+########################################################################################################################
+class EditDepart(LoginRequiredMixin, View):
+    def post(self, request, d_id):
+        old_record = Department.objects.get(id=int(d_id))
+        edit_depart_form = AddDepartForm(request.POST)
+        if edit_depart_form.is_valid():
+            depart = Department()
+            depart.id = old_record.id
+            old_record.delete()
+            depart.name = request.POST.get('name')
+            depart.save()
+            return HttpResponse('{"status":"success", "msg":"编辑成功!"}', content_type='application/json')
+
+        return HttpResponse('{"status":"fail", "msg":"修改失败!"}', content_type='application/json')
+
+########################################################################################################################
+## 删除部门
+########################################################################################################################
+class DeleteDepart(LoginRequiredMixin, View):
+    def post(self, request, d_id):
+        try:
+            depart = Department.objects.get(id=int(d_id))
+            depart.delete()
+            return HttpResponse('{"status":"success", "msg":"删除成功"}', content_type='application/json')
+        except Exception as e:
+            return HttpResponse('{"status":"fail", "msg":"删除失败"}', content_type='application/json')
+
+########################################################################################################################
 ## 分组列表
 ########################################################################################################################
 class GroupListView(LoginRequiredMixin, View):
@@ -174,6 +213,7 @@ class GroupListView(LoginRequiredMixin, View):
         web_title = 'group_manage'
         web_func = 'group_list'
         groups = Group.objects.all()
+        linkmen = Linkman.objects.all()
         keywords = request.GET.get('keywords', '')
 
         if keywords != '':
@@ -203,5 +243,39 @@ class GroupListView(LoginRequiredMixin, View):
             'web_func': web_func,
             'display_chose': display_chose,
             'groups': groups,
+            'linkmen': linkmen,
         }
         return render(request, 'contacts/group_list.html', context=context)
+
+########################################################################################################################
+## 添加分组
+########################################################################################################################
+class AddGroup(LoginRequiredMixin, View):
+    def post(self, request):
+        add_group = AddGroupForm(request.POST)
+        if add_group != '':
+            if Group.objects.filter(name=request.POST.get('name')):
+                return HttpResponse('{"status":"fail", "msg":"分组已存在！"}', content_type='application/json')
+            group = Group.objects.create(name=request.POST.get('name'))
+            members = request.POST.getlist('members[]')
+            num = len(members)
+
+            for i in range(num):
+                group.group_members.add(members[i])
+
+            return HttpResponse('{"status":"success", "msg":"添加成功！"}', content_type='application/json')
+
+        return HttpResponse('{"status":"fail", "msg":"内容不符合要求！"}', content_type='application/json')
+
+########################################################################################################################
+## 删除分组
+########################################################################################################################
+class DeleteGroup(LoginRequiredMixin, View):
+    def post(self, request, g_id):
+        try:
+            group = Group.objects.get(id=int(g_id))
+            group.delete()
+            return HttpResponse('{"status":"success", "msg":"删除成功"}', content_type='application/json')
+        except Exception as e:
+            return HttpResponse('{"status":"fail", "msg":"删除失败"}', content_type='application/json')
+

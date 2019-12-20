@@ -297,7 +297,7 @@ desired effect
               </a>
               <ul class="treeview-menu">
                   <li>
-                      <a href="#"><i class="fa fa-circle-o"></i>模板管理</a>
+                      <a href="{% url 'templets:templet_list' %}"><i class="fa fa-circle-o"></i>模板管理</a>
                   </li>
               </ul>
           </li>
@@ -309,15 +309,28 @@ desired effect
                       <i class="fa fa-angle-left pull-right"></i>
                   </span>
               </a>
+              <ul class="treeview-menu">
+                  <li>
+                      <a href="{% url 'pages:page_list' %}"><i class="fa fa-circle-o"></i>页面管理</a>
+                  </li>
+              </ul>
           </li>
-      <!-- 角色伪造 -->
+      <!-- 发信配置 -->
           <li class="treeview" style="height: auto">
               <a href="#">
-                  <i class="fa fa-male"></i><span>角色伪造</span>
+                  <i class="fa fa-cogs"></i><span>发信配置</span>
                   <span class="pull-right-container">
                       <i class="fa fa-angle-left pull-right"></i>
                   </span>
               </a>
+              <ul class="treeview-menu">
+                  <li>
+                      <a href="#"><i class="fa fa-circle-o"></i>服务器配置</a>
+                  </li>
+                  <li>
+                      <a href="#"><i class="fa fa-circle-o"></i>邮件头配置</a>
+                  </li>
+              </ul>
           </li>
       <!-- 用户 -->
           <li class="treeview" style="height: auto" {% ifequal web_title 'user' %}class="active"{% endifequal %}>
