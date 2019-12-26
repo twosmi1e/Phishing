@@ -18,7 +18,7 @@ from django.views.decorators.csrf import csrf_protect
 ########################################################################################################################
 import time
 from pure_pagination import PageNotAnInteger, Paginator, EmptyPage
-import datetime
+
 
 ########################################################################################################################
 ## 自建模块导入
@@ -27,7 +27,7 @@ from .forms import *
 from .models import *
 from utils.mixin_utils import *
 from utils.sendmail_utils import *
-from utils.other_func import *
+
 
 
 ########################################################################################################################
@@ -129,16 +129,27 @@ class DeleteTemplet(LoginRequiredMixin, View):
 ########################################################################################################################
 class EditTemplet(LoginRequiredMixin, View):
     def post(self, request, t_id):
-        old_templet = Templet.objects.get(id=int(t_id))
-        edit_templet_form = AddTempletForm(request.POST)
-        if edit_templet_form.is_valid():
-            templet = Templet()
-            templet.id = old_templet.id
-            old_templet.delete()
-            templet.name = request.POST.get('name')
-            templet.subject = request.POST.get('subject')
-            templet.text = request.POST.get('text')
+        templet = Templet.objects.get(id=int(t_id))
+        #edit_templet_form = AddTempletForm(request.POST)
+        edited_text = request.POST.get('text')
+        if edited_text:
+            templet.text = edited_text
             templet.save()
             return HttpResponse('{"status":"success", "msg":"修改模板成功！"}', content_type='application/json')
         else:
             return HttpResponse('{"status":"fail", "msg":"修改模板失败！"}', content_type='application/json')
+
+########################################################################################################################
+## 模板详情
+########################################################################################################################
+class TempletDetail(LoginRequiredMixin, View):
+    def get(self, request, t_id):
+        web_title = 'templet_manage'
+        web_func = 'templet_detail'
+        templet = Templet.objects.get(id=int(t_id))
+        context = {
+            'web_title': web_title,
+            'web_func': web_func,
+            'templet': templet,
+        }
+        return render(request, 'templets/templet_detail.html', context=context)

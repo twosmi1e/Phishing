@@ -30,12 +30,13 @@ urlpatterns = [
     # 列表视图
     path('list', IndexView.as_view(), name='templet_list'),
     # 添加模板
-    path('templet/add', AddTemplet.as_view(), name='add_templet'),
+    path('add', AddTemplet.as_view(), name='add_templet'),
     # 删除模板
-    path('templet/del/<int:t_id>', DeleteTemplet.as_view(), name='del_templet'),
+    path('del/<int:t_id>', DeleteTemplet.as_view(), name='del_templet'),
     # 编辑模板
-    path('template/edit/<int:t_ld>', EditTemplet.as_view(), name='edit_templet'),
-
+    path('edit/<int:t_id>', EditTemplet.as_view(), name='edit_templet'),
+    # 模板详情
+    path('detail/<int:t_id>', TempletDetail.as_view(), name='templet_detail'),
 ]
 
 

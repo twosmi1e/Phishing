@@ -50,6 +50,8 @@ INSTALLED_APPS = [
     'templets',
     # 钓鱼页面
     'pages',
+    # 发信配置
+    'smtp',
 ]
 
 MIDDLEWARE = [

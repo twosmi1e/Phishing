@@ -90,13 +90,9 @@ class AddLinkman(LoginRequiredMixin, View):
 ########################################################################################################################
 class EditLinkman(LoginRequiredMixin, View):
     def post(self, request, l_id):
-        old_record = Linkman.objects.get(id=int(l_id))
+        linkman = Linkman.objects.get(id=int(l_id))
         edit_linkman_form = AddLinkmanForm(request.POST)
         if edit_linkman_form.is_valid():
-
-            linkman = Linkman()
-            linkman.id = old_record.id
-            old_record.delete()
             linkman.name = request.POST.get('name')
             linkman.email = request.POST.get('email')
             linkman.depart_id = request.POST.get('depart')
@@ -181,12 +177,9 @@ class AddDepart(LoginRequiredMixin, View):
 ########################################################################################################################
 class EditDepart(LoginRequiredMixin, View):
     def post(self, request, d_id):
-        old_record = Department.objects.get(id=int(d_id))
+        depart = Department.objects.get(id=int(d_id))
         edit_depart_form = AddDepartForm(request.POST)
         if edit_depart_form.is_valid():
-            depart = Department()
-            depart.id = old_record.id
-            old_record.delete()
             depart.name = request.POST.get('name')
             depart.save()
             return HttpResponse('{"status":"success", "msg":"编辑成功!"}', content_type='application/json')

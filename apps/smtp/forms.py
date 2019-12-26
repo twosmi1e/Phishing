@@ -5,3 +5,10 @@
 # @Site    : 
 # @File    : forms.py
 # @Software: PyCharm
+
+from django import forms
+from .models import *
+
+class AddServerForm(forms.ModelForm):
+    class Meta:
+        model = EmailServer

@@ -32,4 +32,6 @@ urlpatterns = [
     path('templets/', include('templets.urls', namespace='templets')),
     # 钓鱼页面
     path('pages/', include('pages.urls', namespace='pages')),
+    # 发信配置
+    path('smtp/', include('smtp.urls', namespace='smtp')),
 ]

@@ -29,4 +29,8 @@ app_name = 'pages'
 urlpatterns = [
     # 列表视图
     path('list', IndexView.as_view(), name='page_list'),
+    # 添加页面
+    path('add/', AddPage.as_view(), name='add_page'),
+    # 删除页面
+    path('del/<int:p_id>', DeletePage.as_view(), name='del_page')
 ]

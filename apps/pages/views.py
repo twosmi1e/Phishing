@@ -88,3 +88,15 @@ class AddPage(LoginRequiredMixin, View):
             return HttpResponse('{"status":"success", "msg":"添加页面成功！"}', content_type='application/json')
         else:
             return HttpResponse('{"status":"fail", "msg":"添加页面失败！"}', content_type='application/json')
+
+########################################################################################################################
+## 删除页面
+########################################################################################################################
+class DeletePage(LoginRequiredMixin, View):
+    def post(self, request, p_id):
+        try:
+            page = Page.objects.get(id=int(p_id))
+            page.delete()
+            return HttpResponse('{"status":"success", "msg":"删除成功"}', content_type='application/json')
+        except Exception as e:
+            return HttpResponse('{"status":"fail", "msg":"删除失败"}', content_type='application/json')

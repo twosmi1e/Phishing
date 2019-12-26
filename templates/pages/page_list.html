@@ -66,7 +66,7 @@
                         <td class="text-center" style="vertical-align : middle;">{{ page.name }}</td>
                         <td class="text-center" style="vertical-align: middle;">
                             <button class="btn btn-info">详情</button>
-                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteTempletModal{{ page.id }}">删除</button>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeletePageModal{{ page.id }}">删除</button>
                         </td>
                       </tr>
                     {% endfor %}
@@ -132,7 +132,7 @@
         <h4 class="modal-title">添加钓鱼页面</h4>
       </div>
       <div class="modal-body">
-          <form method="post" id="js_addTempletForm">
+          <form method="post" id="js_addPageForm">
               <label class="control-label" for="name">页面名称:</label>
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="名称" name="name" />
@@ -151,12 +151,25 @@
                     height: 550,
                 });
             </script>
+
+            <div class="checkbox">
+                <label for="capture_username">
+                    <input type="checkbox" name="capture_username" value="true">
+                    抓取输入用户名
+                </label>
+            </div>
+            <div class="checkbox">
+                <label for="capture_username">
+                    <input type="checkbox" name="capture_password" value="true">
+                    抓取输入密码
+                </label>
+            </div>
           </form>
 
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
-        <button type="button" class="btn btn-primary" id="js_addTemplet">保存</button>
+        <button type="button" class="btn btn-primary" id="js_addPage">保存</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -176,7 +189,7 @@
         }
 
         //提交表单
-        $('#js_addTemplet').on('click', function () {
+        $('#js_addPage').on('click', function () {
             CKupdate();
             toastr.options = {
                 closeButton: false,
@@ -196,9 +209,9 @@
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "{% url 'templets:add_templet' %}",
+                url: "{% url 'pages:add_page' %}",
                 dataType: 'json',
-                data: $('#js_addTempletForm').serialize(),
+                data: $('#js_addPageForm').serialize(),
                 async: true,
                 beforeSend: function (xhr, settings) {
                     // 这里需要csrf_token的值，而不是代码
@@ -218,6 +231,64 @@
         })
     })
 </script>
+
+<!-- 删除框 -->
+    {% for page in pages.object_list %}
+   <div class="modal fade modal-warning" id="DeletePageModal{{ page.id }}">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">删除模板</h4>
+          </div>
+          <div class="modal-body">
+             <div class="row" id="modal.flashes"></div>
+              <form method="post" id="js_deletePageForm{{ page.id }}">
+                  <div class="form-group">
+                      <p>是否删除该页面？</p>
+                  </div>
+              </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-outline" id="js_deletePage{{ page.id }}">确认</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+<script>
+//删除
+    $(function () {
+        $('#js_deletePage{{ page.id }}').on('click', function () {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'pages:del_page' page.id %}",
+                data: $('#js_deletePageForm{{ page.id }}').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    // 这里需要csrf_token的值，而不是代码
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.options.timeOut = 1000;
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'pages:page_list' %}"; }
+                        toastr.success(data.msg);
+                    } else if (data.status == 'fail') {
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+{% endfor %}
 
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
 <script src="{% static 'toastr/toastr.min.js' %}"></script>

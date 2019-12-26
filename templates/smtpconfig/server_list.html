@@ -2,12 +2,11 @@
 {% load staticfiles %}
 
 {% block title %}
-  邮件模板
+  邮件服务器配置
 {% endblock title %}
 
 {% block css %}
 
-<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
 {% endblock css %}
 
 <!-- 主体 -->
@@ -16,12 +15,12 @@
     <p style="height: 2px;"></p>
     <!-- 中间栏 -->
     <div class="padder">
-      <!-- 邮件模板 -->
+      <!-- 邮件服务器 -->
       <div>
         <div class="panel panel-default">
           <div class="panel-heading">
             <div style="border-left: 4px solid #003366; margin-bottom: 10px; margin-top: 10px; height: 25px;font-size: 18px;">
-              <span>&nbsp;&nbsp;邮件模板</span>
+              <span>&nbsp;&nbsp;邮件服务器</span>
             </div>
           </div>
           <div class="panel-body container" style="height: 745px;">
@@ -39,7 +38,7 @@
               </form>
                 <div class="navbar-btn pull-right" style="margin-top: 0px;width: 150px;">
                     <span>
-                          <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#AddTempletModal"><i class="fa fa-plus"></i> 添加模板</button>
+                          <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#AddServerModal"><i class="fa fa-plus"></i> 添加配置</button>
                       </span>
                 </div>
             </div>
@@ -54,19 +53,23 @@
                     <thead>
                     <tr role="row">
                       <th class="text-center" rowspan="1" colspan="1" style="">ID</th>
-                      <th class="text-center sorting" rowspan="1" colspan="1" style="">模板名</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">服务器名称</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1">类型</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1">地址</th>
                       <th class="text-center" rowspan="1" colspan="1">操作</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for templet in templets.object_list %}
+                    {% for server in emailservers.object_list %}
                       <tr class="gradeX {% if forloop.counter|divisibleby:'2' %}odd{% else %}even{% endif %}"
                           role="row">
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
-                        <td class="text-center" style="vertical-align : middle;">{{ templet.name }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ server.name }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ server.interface }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ server.host }}</td>
                         <td class="text-center" style="vertical-align: middle;">
-                            <a href="{% url 'templets:templet_detail' templet.id %}" class="btn btn-info">详情</a>
-                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteTempletModal{{ templet.id }}">删除</button>
+                            <button class="btn btn-info">编辑</button>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteServerModal{{ server.id }}">删除</button>
                         </td>
                       </tr>
                     {% endfor %}
@@ -85,13 +88,13 @@
               <div class="col-md-12 text-center">
                 <ul class="pagination">
                   <!-- 上一页 -->
-                  {% if templets.has_previous %}
-                    <li class="long"><a href="?{{ templets.previous_page_number.querystring }}">上一页</a></li>
+                  {% if pages.has_previous %}
+                    <li class="long"><a href="?{{ pages.previous_page_number.querystring }}">上一页</a></li>
                   {% endif %}
                   <!-- 页码 -->
-                  {% for page in templets.pages %}
+                  {% for page in pages.pages %}
                     {% if page %}
-                      {% ifequal page templets.number %}
+                      {% ifequal page pages.number %}
                         <li class="active"><a href="?page={{ page }}">{{ page }}<span
                                 class="sr-only">(current)</span></a></li>
                       {% else %}
@@ -102,8 +105,8 @@
                     {% endif %}
                   {% endfor %}
                   <!-- 下一页 -->
-                  {% if templets.has_next %}
-                    <li><a href="?{{ templets.next_page_number.querystring }}">下一页<span class="sr-only"></span></a>
+                  {% if pages.has_next %}
+                    <li><a href="?{{ pages.next_page_number.querystring }}">下一页<span class="sr-only"></span></a>
                     </li>
                   {% endif %}
                 </ul>
@@ -121,41 +124,52 @@
 
 {% endblock content %}
 {% block script %}
+
 <!-- 添加框 -->
-<div class="modal fade" id="AddTempletModal">
-  <div class="modal-dialog" style="width: 1000px;">
+<div class="modal fade" id="AddServerModal">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">添加邮件模板</h4>
+        <h4 class="modal-title">添加邮件服务器</h4>
       </div>
       <div class="modal-body">
-          <form method="post" id="js_addTempletForm">
-              <label class="control-label" for="name">名称:</label>
+          <form method="post" id="js_addServerForm">
+            <label class="control-label" for="name">服务器名称:</label>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="名称" id="name" name="name" />
+                <input type="text" class="form-control" placeholder="名称" name="name" />
             </div>
-            <label class="control-label" for="subject">邮件标题:</label>
+            <label class="control-label" for="redirect_url">服务器类型:</label>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="标题" id="subject" name="subject" />
+                <select name="interface" id="interface" class="selectpicker form-control">
+                    {% for choice in interface_choice %}
+                        <option value="{{ choice.0 }}">{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
             </div>
-            <label class="control-label" for="text">内容:</label>
+            <label class="control-label" for="host">服务器地址:</label>
             <div class="form-group">
-                <textarea class="ckeditor" id="text" name="text"></textarea>
+                <input type="text" class="form-control" placeholder="服务器地址" name="host">
             </div>
-              <!-- 设置编辑框高度 -->
-            <script>
-                CKEDITOR.replace('text', {
-                    height: 550,
-                });
-            </script>
+            <label class="control-label" for="port">端口:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="25" name="port">
+            </div>
+            <label class="control-label" for="mail_user">用户名:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="邮箱用户名" name="mail_user">
+            </div>
+            <label class="control-label" for="mail_pass">授权口令:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="邮箱授权码" name="mail_pass">
+            </div>
           </form>
-
+        <button type="button" class="btn bg-purple">发送测试邮件</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
-        <button type="button" class="btn btn-primary" id="js_addTemplet">保存</button>
+        <button type="button" class="btn btn-primary" id="js_addPage">保存</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -175,7 +189,7 @@
         }
 
         //提交表单
-        $('#js_addTemplet').on('click', function () {
+        $('#js_addPage').on('click', function () {
             CKupdate();
             toastr.options = {
                 closeButton: false,
@@ -195,9 +209,9 @@
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "{% url 'templets:add_templet' %}",
+                url: "{% url 'pages:add_page' %}",
                 dataType: 'json',
-                data: $('#js_addTempletForm').serialize(),
+                data: $('#js_addPageForm').serialize(),
                 async: true,
                 beforeSend: function (xhr, settings) {
                     // 这里需要csrf_token的值，而不是代码
@@ -219,8 +233,8 @@
 </script>
 
 <!-- 删除框 -->
-    {% for templet in templets.object_list %}
-   <div class="modal fade modal-warning" id="DeleteTempletModal{{ templet.id }}">
+    {% for page in pages.object_list %}
+   <div class="modal fade modal-warning" id="DeletePageModal{{ page.id }}">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
@@ -230,16 +244,16 @@
           </div>
           <div class="modal-body">
              <div class="row" id="modal.flashes"></div>
-              <form method="post" id="js_deleteTempletForm{{ templet.id }}">
+              <form method="post" id="js_deletePageForm{{ page.id }}">
                   <div class="form-group">
-                      <p>是否删除该模板？</p>
+                      <p>是否删除该页面？</p>
                   </div>
               </form>
 
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-outline" id="js_deleteTemplet{{ templet.id }}">确认</button>
+            <button type="button" class="btn btn-outline" id="js_deletePage{{ page.id }}">确认</button>
           </div>
         </div>
 
@@ -249,12 +263,12 @@
 <script>
 //删除
     $(function () {
-        $('#js_deleteTemplet{{ templet.id }}').on('click', function () {
+        $('#js_deletePage{{ page.id }}').on('click', function () {
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "{% url 'templets:del_templet' templet.id %}",
-                data: $('#js_deleteTempletForm{{ templet.id }}').serialize(),
+                url: "{% url 'pages:del_page' page.id %}",
+                data: $('#js_deletePageForm{{ page.id }}').serialize(),
                 async: true,
                 beforeSend: function (xhr, settings) {
                     // 这里需要csrf_token的值，而不是代码
@@ -263,7 +277,7 @@
                 success: function (data) {
                     if (data.status == 'success') {
                         toastr.options.timeOut = 1000;
-                        toastr.options.onHidden = function() { window.location.href = "{% url 'templets:templet_list' %}"; }
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'pages:page_list' %}"; }
                         toastr.success(data.msg);
                     } else if (data.status == 'fail') {
                         toastr.error(data.msg);
@@ -272,8 +286,6 @@
             });
         });
     });
-    
-
 </script>
 
 {% endfor %}

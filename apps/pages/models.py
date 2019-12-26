@@ -15,3 +15,10 @@ class Page(models.Model):
     capture_username = models.BooleanField(default=False)
     capture_password = models.BooleanField(default=False)
     add_time = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = "钓鱼页面"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
