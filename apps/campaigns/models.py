@@ -8,3 +8,4 @@ class Campaign(models.Model):
     sendby_date = models.DateField(blank=True, verbose_name="结束时间")
     complete_date = models.DateField(verbose_name="完成时间")
 
+    group = models

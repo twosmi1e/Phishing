@@ -65,10 +65,10 @@
                           role="row">
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ server.name }}</td>
-                        <td class="text-center" style="vertical-align : middle;">{{ server.interface }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ server.get_interface_display }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ server.host }}</td>
                         <td class="text-center" style="vertical-align: middle;">
-                            <button class="btn btn-info">编辑</button>
+                            <button class="btn btn-info" data-toggle="modal" data-target="#EditServerModal{{ server.id }}">编辑</button>
                             <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteServerModal{{ server.id }}">删除</button>
                         </td>
                       </tr>
@@ -142,7 +142,7 @@
             </div>
             <label class="control-label" for="redirect_url">服务器类型:</label>
             <div class="form-group">
-                <select name="interface" id="interface" class="selectpicker form-control">
+                <select name="interface" class="selectpicker form-control">
                     {% for choice in interface_choice %}
                         <option value="{{ choice.0 }}">{{ choice.1 }}</option>
                     {% endfor %}
@@ -164,12 +164,17 @@
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="邮箱授权码" name="mail_pass">
             </div>
+            <label class="control-label" for="to_addr">测试邮件接收地址:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="测试时填写" name="to_addr">
+            </div>
           </form>
-        <button type="button" class="btn bg-purple">发送测试邮件</button>
+
+        <button type="button" class="btn bg-purple" id="js_SendTestEmail">发送测试邮件</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
-        <button type="button" class="btn btn-primary" id="js_addPage">保存</button>
+        <button type="button" class="btn btn-primary" id="js_addServer">保存</button>
       </div>
     </div>
     <!-- /.modal-content -->
@@ -182,15 +187,8 @@
 <script>
 //添加按钮提交
     $(function () {
-        //处理ckeditor的值
-        function CKupdate() {
-            for (instance in CKEDITOR.instances)
-                CKEDITOR.instances[instance].updateElement();
-        }
-
         //提交表单
-        $('#js_addPage').on('click', function () {
-            CKupdate();
+        $('#js_addServer').on('click', function () {
             toastr.options = {
                 closeButton: false,
                 debug: false,
@@ -209,9 +207,9 @@
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "{% url 'pages:add_page' %}",
+                url: "{% url 'smtp:add_server' %}",
                 dataType: 'json',
-                data: $('#js_addPageForm').serialize(),
+                data: $('#js_addServerForm').serialize(),
                 async: true,
                 beforeSend: function (xhr, settings) {
                     // 这里需要csrf_token的值，而不是代码
@@ -220,7 +218,7 @@
                 success: function (data) {
                     if (data.status == 'success') {
                         toastr.options.timeOut = 1000;
-                        toastr.options.onHidden = function() { window.location.href = "{% url 'templets:templet_list' %}"; }
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'smtp:server_list' %}"; }
                         toastr.success(data.msg);
                     } else if (data.status == 'fail') {
                         toastr.options.timeOut = 1000;
@@ -230,30 +228,72 @@
             });
         })
     })
+//发送测试邮件
+$(function () {
+    //提交表单
+    $('#js_SendTestEmail').on('click', function () {
+        toastr.options = {
+                closeButton: false,
+                debug: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                onclick: null,
+                showDuration: "300",
+                hideDuration: "1000",
+                timeOut: "5000",
+                extendedTimeOut: "1000",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+            };
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'smtp:send_test_email' %}",
+                dataType: 'json',
+                data: $('#js_addServerForm').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    // 这里需要csrf_token的值，而不是代码
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.options.timeOut = 1000;
+                        toastr.success(data.msg);
+                    } else if (data.status == 'fail') {
+                        toastr.options.timeOut = 1000;
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+    })
+})
 </script>
 
 <!-- 删除框 -->
-    {% for page in pages.object_list %}
-   <div class="modal fade modal-warning" id="DeletePageModal{{ page.id }}">
+    {% for server in emailservers.object_list %}
+   <div class="modal fade modal-warning" id="DeleteServerModal{{ server.id }}">
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">删除模板</h4>
+            <h4 class="modal-title">删除服务器配置</h4>
           </div>
           <div class="modal-body">
              <div class="row" id="modal.flashes"></div>
-              <form method="post" id="js_deletePageForm{{ page.id }}">
+              <form method="post" id="js_deleteServerForm{{ server.id }}">
                   <div class="form-group">
-                      <p>是否删除该页面？</p>
+                      <p>是否删除该服务器配置？</p>
                   </div>
               </form>
 
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
-            <button type="button" class="btn btn-outline" id="js_deletePage{{ page.id }}">确认</button>
+            <button type="button" class="btn btn-outline" id="js_deleteServer{{ server.id }}">确认</button>
           </div>
         </div>
 
@@ -263,12 +303,12 @@
 <script>
 //删除
     $(function () {
-        $('#js_deletePage{{ page.id }}').on('click', function () {
+        $('#js_deleteServer{{ server.id }}').on('click', function () {
             $.ajax({
                 cache: false,
                 type: "POST",
-                url: "{% url 'pages:del_page' page.id %}",
-                data: $('#js_deletePageForm{{ page.id }}').serialize(),
+                url: "{% url 'smtp:del_server' server.id %}",
+                data: $('#js_deleteServerForm{{ server.id }}').serialize(),
                 async: true,
                 beforeSend: function (xhr, settings) {
                     // 这里需要csrf_token的值，而不是代码
@@ -277,7 +317,7 @@
                 success: function (data) {
                     if (data.status == 'success') {
                         toastr.options.timeOut = 1000;
-                        toastr.options.onHidden = function() { window.location.href = "{% url 'pages:page_list' %}"; }
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'smtp:server_list' %}"; }
                         toastr.success(data.msg);
                     } else if (data.status == 'fail') {
                         toastr.error(data.msg);
@@ -288,6 +328,156 @@
     });
 </script>
 
+
+<!-- 编辑框 -->
+
+<div class="modal fade" id="EditServerModal{{ server.id }}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">添加邮件服务器</h4>
+      </div>
+      <div class="modal-body">
+          <form method="post" id="js_EditServerForm{{ server.id }}">
+            <label class="control-label" for="name">服务器名称:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="名称" name="name" value="{{ server.name }}"/>
+            </div>
+            <label class="control-label" for="redirect_url">服务器类型:</label>
+            <div class="form-group">
+                <select name="interface" class="selectpicker form-control">
+                    {% for choice in interface_choice %}
+                        <option value="{{ choice.0 }}"
+                        {% ifequal server.interface choice.0 %}selected{% endifequal %}>
+                            {{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <label class="control-label" for="host">服务器地址:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="服务器地址" name="host" value="{{ server.host }}">
+            </div>
+            <label class="control-label" for="port">端口:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="25" name="port" value="{{ server.port }}">
+            </div>
+            <label class="control-label" for="mail_user">用户名:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="邮箱用户名" name="mail_user" value="{{ server.mail_user }}">
+            </div>
+            <label class="control-label" for="mail_pass">授权口令:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="邮箱授权码" name="mail_pass" value="{{ server.mail_pass }}">
+            </div>
+            <label class="control-label" for="to_addr">测试邮件接收地址:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="测试时填写" name="to_addr">
+            </div>
+          </form>
+
+        <button type="button" class="btn bg-purple" id="js_SendTestEmail1">发送测试邮件</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="js_editServer{{ server.id }}">保存</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+
+<script>
+//编辑
+$(function () {
+    //提交表单
+    $('#js_editServer{{ server.id }}').on('click', function () {
+        toastr.options = {
+            closeButton: false,
+            debug: false,
+            progressBar: false,
+            positionClass: "toast-top-right",
+            onclick: null,
+            showDuration: "300",
+            hideDuration: "1000",
+            timeOut: "5000",
+            extendedTimeOut: "1000",
+            showEasing: "swing",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut"
+        };
+        $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'smtp:edit_server' server.id %}",
+                dataType: 'json',
+                data: $('#js_EditServerForm{{ server.id }}').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    // 这里需要csrf_token的值，而不是代码
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.options.timeOut = 1000;
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'smtp:server_list' %}"; }
+                        toastr.success(data.msg);
+                    } else if (data.status == 'fail') {
+                        toastr.options.timeOut = 1000;
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+        })
+});
+//发送测试邮件
+$(function () {
+    //提交表单
+    $('#js_SendTestEmail1').on('click', function () {
+        toastr.options = {
+            closeButton: false,
+            debug: false,
+            progressBar: false,
+            positionClass: "toast-top-right",
+            onclick: null,
+            showDuration: "300",
+            hideDuration: "1000",
+            timeOut: "5000",
+            extendedTimeOut: "1000",
+            showEasing: "swing",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut"
+        };
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "{% url 'smtp:send_test_email' %}",
+            dataType: 'json',
+            data: $('#js_EditServerForm{{ server.id }}').serialize(),
+            async: true,
+            beforeSend: function (xhr, settings) {
+                // 这里需要csrf_token的值，而不是代码
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function (data) {
+                if (data.status == 'success') {
+                    toastr.options.timeOut = 1000;
+                    toastr.success(data.msg);
+                } else if (data.status == 'fail') {
+                    toastr.options.timeOut = 1000;
+                    toastr.error(data.msg);
+                }
+            }
+        });
+    })
+})
+
+</script>
 {% endfor %}
 
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>

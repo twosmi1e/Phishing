@@ -31,5 +31,10 @@ urlpatterns = [
     path('server/list/', ServerListView.as_view(), name='server_list'),
     # 添加配置
     path('server/add', AddServer.as_view(), name='add_server'),
-
+    # 发送测试邮件
+    path('server/sendmail', SendTestEmail.as_view(), name='send_test_email'),
+    # 删除配置
+    path('server/del/<int:s_id>', DeleteServer.as_view(), name='del_server'),
+    # 编辑配置
+    path('server/edit/<int:s_id>', EditServer.as_view(), name='edit_server'),
 ]

@@ -2,6 +2,7 @@ from django.db import models
 
 # Create your models here.
 
+
 class EmailServer(models.Model):
     INTERFACE_TYPE = (
         ('1', 'POP3'),
@@ -15,6 +16,21 @@ class EmailServer(models.Model):
     mail_user = models.CharField(verbose_name="用户名", max_length=20)
     mail_pass = models.CharField(verbose_name="授权口令", max_length=20)
 
+    class Meta:
+        verbose_name = "邮件服务器"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+
 class EmailHeader(models.Model):
     from_addr = models.CharField(verbose_name="发件人", max_length=40)
     to_addr = models.CharField(verbose_name="收件人", max_length=40)
+
+    class Meta:
+        verbose_name = "邮件头"
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name

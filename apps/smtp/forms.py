@@ -12,3 +12,4 @@ from .models import *
 class AddServerForm(forms.ModelForm):
     class Meta:
         model = EmailServer
+        exclude = []
