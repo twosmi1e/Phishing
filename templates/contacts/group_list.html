@@ -60,7 +60,7 @@
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ each_group.name }}</td>
                         <td class="text-center" style="vertical-align: middle;">
-                            <button class="btn btn-info" data-toggle="modal">编辑</button>
+                            <button class="btn btn-info" data-toggle="modal" data-target="#EditGroupModal{{ each_group.id }}">编辑</button>
                             <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteGroupModal{{ each_group.id }}">删除</button>
                         </td>
                       </tr>

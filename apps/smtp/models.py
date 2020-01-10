@@ -16,6 +16,7 @@ class EmailServer(models.Model):
     mail_user = models.CharField(verbose_name="用户名", max_length=20)
     mail_pass = models.CharField(verbose_name="授权口令", max_length=20)
 
+
     class Meta:
         verbose_name = "邮件服务器"
         verbose_name_plural = verbose_name
@@ -25,8 +26,9 @@ class EmailServer(models.Model):
 
 
 class EmailHeader(models.Model):
-    from_addr = models.CharField(verbose_name="发件人", max_length=40)
-    to_addr = models.CharField(verbose_name="收件人", max_length=40)
+    name = models.CharField(verbose_name="名称", max_length=20, default="")
+    from_name = models.CharField(verbose_name="发件人姓名", max_length=40, default="Phishing")
+    from_addr = models.CharField(verbose_name="发件人地址", max_length=40)
 
     class Meta:
         verbose_name = "邮件头"

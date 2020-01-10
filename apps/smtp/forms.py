@@ -9,7 +9,13 @@
 from django import forms
 from .models import *
 
+
 class AddServerForm(forms.ModelForm):
     class Meta:
         model = EmailServer
+        exclude = []
+
+class AddHeaderForm(forms.ModelForm):
+    class Meta:
+        model = EmailHeader
         exclude = []

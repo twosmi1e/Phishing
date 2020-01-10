@@ -65,7 +65,7 @@
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ page.name }}</td>
                         <td class="text-center" style="vertical-align: middle;">
-                            <button class="btn btn-info">详情</button>
+                            <a href="{% url 'pages:page_detail' page.id %}" class="btn btn-info">详情</a>
                             <button class="btn btn-danger" data-toggle="modal" data-target="#DeletePageModal{{ page.id }}">删除</button>
                         </td>
                       </tr>
@@ -147,7 +147,7 @@
             </div>
               <!-- 设置编辑框高度 -->
             <script>
-                CKEDITOR.replace('text', {
+                CKEDITOR.replace('html', {
                     height: 550,
                 });
             </script>
@@ -220,7 +220,7 @@
                 success: function (data) {
                     if (data.status == 'success') {
                         toastr.options.timeOut = 1000;
-                        toastr.options.onHidden = function() { window.location.href = "{% url 'templets:templet_list' %}"; }
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'pages:page_list' %}"; }
                         toastr.success(data.msg);
                     } else if (data.status == 'fail') {
                         toastr.options.timeOut = 1000;

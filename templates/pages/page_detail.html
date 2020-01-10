@@ -1,0 +1,130 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  钓鱼页面
+{% endblock title %}
+
+{% block css %}
+    <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+
+{% endblock css %}
+
+<!-- 主体 -->
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+  <div class="col" style="width: auto">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        钓鱼页面
+      </h1>
+
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-info">
+            <div class="box-header">
+              <h3 class="box-title">{{ page.subject }}
+              </h3>
+              <!-- tools box -->
+
+              <div class="pull-right box-tools">
+                <button type="button" class="btn btn-info btn-sm" id="js_SaveEdit">保存编辑</button>
+                <button type="button" class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip"
+                        title="Collapse">
+                  <i class="fa fa-minus"></i></button>
+                <button type="button" class="btn btn-info btn-sm" data-widget="remove" data-toggle="tooltip"
+                        title="Remove">
+                  <i class="fa fa-times"></i></button>
+              </div>
+              <!-- /. tools -->
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body pad">
+              <form>
+                    <textarea name="html" class="ckeditor" id="html">
+                        {{ page.html|safe }}
+                    </textarea>
+                  <script>
+                      CKEDITOR.replace('html', {
+                          height: 550,
+                      });
+                  </script>
+              </form>
+            </div>
+          </div>
+
+      </div>
+      <!-- ./row -->
+      </div>
+    </section>
+  </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock %}
+
+{% block script %}
+<script>
+$(function () {
+        //处理ckeditor的值
+        function CKupdate() {
+            for (instance in CKEDITOR.instances)
+                CKEDITOR.instances[instance].updateElement();
+        }
+
+        //提交表单
+        $('#js_SaveEdit').on('click', function () {
+            CKupdate();
+            var html = $("#html").val();
+            toastr.options = {
+                closeButton: false,
+                debug: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                onclick: null,
+                showDuration: "300",
+                hideDuration: "1000",
+                timeOut: "5000",
+                extendedTimeOut: "1000",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+            };
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'pages:edit_page' page.id %}",
+                dataType: 'json',
+                data: {
+                    'html':html,
+                },
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    // 这里需要csrf_token的值，而不是代码
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.options.timeOut = 1000;
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'pages:page_list' %}"; }
+                        toastr.success(data.msg);
+                    } else if (data.status == 'fail') {
+                        toastr.options.timeOut = 1000;
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+        })
+    });
+
+</script>
+
+<link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
+<script src="{% static 'toastr/toastr.min.js' %}"></script>
+{% endblock script %}

@@ -1,5 +1,7 @@
 from django.db import models
 
+
+
 # Create your models here.
 class Campaign(models.Model):
     name = models.CharField(max_length=20, verbose_name="任务名称")
@@ -8,4 +10,5 @@ class Campaign(models.Model):
     sendby_date = models.DateField(blank=True, verbose_name="结束时间")
     complete_date = models.DateField(verbose_name="完成时间")
 
-    group = models
+    group = models.ForeignKey('contacts.Group', verbose_name="分组", on_delete=models.DO_NOTHING)
+

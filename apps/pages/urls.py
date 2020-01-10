@@ -32,5 +32,9 @@ urlpatterns = [
     # 添加页面
     path('add/', AddPage.as_view(), name='add_page'),
     # 删除页面
-    path('del/<int:p_id>', DeletePage.as_view(), name='del_page')
+    path('del/<int:p_id>', DeletePage.as_view(), name='del_page'),
+    # 页面详情
+    path('detail/<int:p_id>', PageDetail.as_view(), name='page_detail'),
+    # 编辑页面
+    path('edit/<int:p_id>', EditPage.as_view(), name='edit_page'),
 ]
