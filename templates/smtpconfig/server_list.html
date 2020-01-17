@@ -371,13 +371,7 @@ $(function () {
             <div class="form-group">
                 <input type="text" class="form-control" placeholder="邮箱授权码" name="mail_pass" value="{{ server.mail_pass }}">
             </div>
-            <label class="control-label" for="to_addr">测试邮件接收地址:</label>
-            <div class="form-group">
-                <input type="text" class="form-control" placeholder="测试时填写" name="to_addr">
-            </div>
           </form>
-
-        <button type="button" class="btn bg-purple" id="js_SendTestEmail1">发送测试邮件</button>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
@@ -434,48 +428,6 @@ $(function () {
             });
         })
 });
-//发送测试邮件
-$(function () {
-    //提交表单
-    $('#js_SendTestEmail1').on('click', function () {
-        toastr.options = {
-            closeButton: false,
-            debug: false,
-            progressBar: false,
-            positionClass: "toast-top-right",
-            onclick: null,
-            showDuration: "300",
-            hideDuration: "1000",
-            timeOut: "5000",
-            extendedTimeOut: "1000",
-            showEasing: "swing",
-            hideEasing: "linear",
-            showMethod: "fadeIn",
-            hideMethod: "fadeOut"
-        };
-        $.ajax({
-            cache: false,
-            type: "POST",
-            url: "{% url 'smtp:send_test_email' %}",
-            dataType: 'json',
-            data: $('#js_EditServerForm{{ server.id }}').serialize(),
-            async: true,
-            beforeSend: function (xhr, settings) {
-                // 这里需要csrf_token的值，而不是代码
-                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-            },
-            success: function (data) {
-                if (data.status == 'success') {
-                    toastr.options.timeOut = 1000;
-                    toastr.success(data.msg);
-                } else if (data.status == 'fail') {
-                    toastr.options.timeOut = 1000;
-                    toastr.error(data.msg);
-                }
-            }
-        });
-    })
-})
 
 </script>
 {% endfor %}

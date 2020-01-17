@@ -115,8 +115,11 @@ class SendTestEmail(LoginRequiredMixin, View):
         to_addr = request.POST.get('to_addr')
 
         # 登录邮件服务器
-        server = smtplib.SMTP(server_host, server_port)
-        server.login(server_mail_user, server_mail_pass)
+        try:
+            server = smtplib.SMTP(server_host, server_port)
+            server.login(server_mail_user, server_mail_pass)
+        except:
+            return HttpResponse('{"status":"fail", "msg":"无法连接邮件服务器！"}', content_type='application/json')
         # 构造测试邮件
         msg = MIMEText('邮件服务器配置有效!', 'plain', 'utf-8')
         msg['To'] = self._format_addr('<%s>' % to_addr)
@@ -263,8 +266,11 @@ class TestHeader(LoginRequiredMixin, View):
         to_addr = request.POST.get('to_addr')
 
         # 登录邮件服务器
-        server = smtplib.SMTP(eserver.host, eserver.port)
-        server.login(eserver.mail_user, eserver.mail_pass)
+        try:
+            server = smtplib.SMTP(eserver.host, eserver.port)
+            server.login(eserver.mail_user, eserver.mail_pass)
+        except:
+            return HttpResponse('{"status":"fail", "msg":"无法连接邮件服务器！"}', content_type='application/json')
         # 构造测试邮件
         msg = MIMEText('邮件服务器配置有效!请检查邮件头!', 'plain', 'utf-8')
         msg['To'] = self._format_addr('<%s>' % to_addr)
@@ -273,5 +279,5 @@ class TestHeader(LoginRequiredMixin, View):
         try:
             server.sendmail(eserver.mail_user, to_addr, msg.as_string())
             return HttpResponse('{"status":"success", "msg":"发送成功！"}', content_type='application/json')
-        except:
+        except smtplib.SMTPException:
             return HttpResponse('{"status":"fail", "msg":"发送失败！"}', content_type='application/json')

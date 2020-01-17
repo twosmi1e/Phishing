@@ -60,7 +60,7 @@
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ each_group.name }}</td>
                         <td class="text-center" style="vertical-align: middle;">
-                            <button class="btn btn-info" data-toggle="modal" data-target="#EditGroupModal{{ each_group.id }}">编辑</button>
+                            <a href="{% url 'contacts:group_detail' each_group.id %}" class="btn btn-info">详情</a>
                             <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteGroupModal{{ each_group.id }}">删除</button>
                         </td>
                       </tr>
@@ -302,7 +302,5 @@ jQuery(document).ready(function($) {
 
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
 <script src="{% static 'toastr/toastr.min.js' %}"></script>
-<script src="{% static 'adminlet-2.4.10/bower_components/datatables.net/js/jquery.dataTables.js' %}"></script>
-<script src="{% static 'adminlet-2.4.10/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
 <script src="{% static 'multiselect/dist/js/multiselect.min.js' %}"></script>
 {% endblock script %}

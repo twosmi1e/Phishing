@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 import sys
+import djcelery
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -52,6 +53,11 @@ INSTALLED_APPS = [
     'pages',
     # 发信配置
     'smtp',
+    # 任务
+    'campaigns',
+    # celery
+    'djcelery',
+
 ]
 
 MIDDLEWARE = [
@@ -178,3 +184,17 @@ EMAIL_HOST_USER = 'xxxx'
 EMAIL_HOST_PASSWORD = 'xxxx'
 # 发件箱名字，和邮箱地址一样就行了
 DEFAULT_FROM_EMAIL = 'xxxx'
+
+########################################################################################################################
+## celery配置
+########################################################################################################################
+# 添加celery配置
+BROKER_URL ='amqp://guest@127.0.0.1//'
+CELERY_RESULT_BACKEND = 'amqp://guest@127.0.0.1//'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_IGNORE_RESULT = True
+# 启用报错邮件
+CELERY_SEND_TASK_ERROR_EMAILS = True

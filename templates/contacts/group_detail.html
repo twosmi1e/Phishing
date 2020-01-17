@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  分组详情
+{% endblock title %}
+
+{% block css %}
+    <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
+
+{% endblock css %}
+
+<!-- 主体 -->
+{% block content %}
+<!-- Content Wrapper. Contains page content -->
+  <div class="col" style="width: auto">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        分组详情
+      </h1>
+
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="box box-info">
+            <div class="box-header">
+              <h3 class="box-title">{{ page.subject }}
+              </h3>
+              <!-- tools box -->
+
+
+              <!-- /. tools -->
+            </div>
+            <!-- /.box-header -->
+
+          </div>
+
+      </div>
+      <!-- ./row -->
+      </div>
+    </section>
+  </div>
+    <!-- /.content -->
+  </div>
+  <!-- /.content-wrapper -->
+{% endblock %}
+
+{% block script %}
+
+<link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
+<script src="{% static 'toastr/toastr.min.js' %}"></script>
+{% endblock script %}

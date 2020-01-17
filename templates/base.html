@@ -23,6 +23,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         page. However, you can choose any other skin. Make sure you
         apply the skin class to the body tag so the changes take effect. -->
   <link rel="stylesheet" href="{% static 'adminlet-2.4.10/dist/css/skins/skin-blue.min.css' %}">
+  <!-- Bootstrap 3.3.7 -->
+  <link rel="stylesheet" href="{% static 'adminlet-2.4.10/bower_components/bootstrap/dist/css/bootstrap.min.css'%}">
 
     {% block css %}{% endblock %}
 
@@ -280,10 +282,10 @@ desired effect
               </a>
               <ul class="treeview-menu">
                   <li>
-                      <a href="#"><i class="fa fa-circle-o"></i>任务列表</a>
+                      <a href="{% url 'campaigns:campaign_list' %}"><i class="fa fa-circle-o"></i>任务列表</a>
                   </li>
                   <li>
-                      <a href="#"><i class="fa fa-circle-o"></i>新建任务</a>
+                      <a href="{% url 'campaigns:campaign_add' %}"><i class="fa fa-circle-o"></i>新建任务</a>
                   </li>
               </ul>
           </li>
@@ -398,6 +400,7 @@ desired effect
 <script src="{% static 'adminlet-2.4.10/bower_components/bootstrap/dist/js/bootstrap.min.js' %}"></script>
 <!-- AdminLTE App -->
 <script src="{% static 'adminlet-2.4.10/dist/js/adminlte.min.js' %}"></script>
+<script src="{% static 'adminlet-2.4.10/bower_components/select2/dist/js/select2.full.min.js' %}"></script>
 <script src="{% static 'adminlet-2.4.10/bower_components/fastclick/lib/fastclick.js' %}"></script>
 {% block script %}{% endblock %}
 

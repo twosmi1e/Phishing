@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  任务列表
+{% endblock title %}
+
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/bower_components/select2/dist/css/select2.min.css' %}">
+    <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
+    <!-- daterange picker -->
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/bower_components/bootstrap-daterangepicker/daterangepicker.css' %}">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/plugins/iCheck/all.css' %}">
+    <!-- Bootstrap Color Picker -->
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/bower_components/bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css' %}">
+    <!-- Bootstrap time Picker -->
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/plugins/timepicker/bootstrap-timepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/dist/css/AdminLTE.min.css' %}">
+{% endblock css %}
+
+<!-- 主体 -->
+{% block content %}
+<div class="box box-default">
+        <div class="box-header with-border">
+          <h3 class="box-title">Select2</h3>
+
+          <div class="box-tools pull-right">
+            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
+            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
+          </div>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="form-group">
+                <label>Minimal</label>
+                <select class="form-control select2" style="width: 100%;">
+                  <option selected="selected">Alabama</option>
+                  <option>Alaska</option>
+                  <option>California</option>
+                  <option>Delaware</option>
+                  <option>Tennessee</option>
+                  <option>Texas</option>
+                  <option>Washington</option>
+                </select>
+              </div>
+              <!-- /.form-group -->
+              <div class="form-group">
+                <label>Multiple</label>
+                <select class="form-control select2" multiple="multiple" data-placeholder="Select a State"
+                        style="width: 100%;">
+                  <option>Alabama</option>
+                  <option>Alaska</option>
+                  <option>California</option>
+                  <option>Delaware</option>
+                  <option>Tennessee</option>
+                  <option>Texas</option>
+                  <option>Washington</option>
+                </select>
+              </div>
+            </div>
+            <!-- /.col -->
+
+          </div>
+          <!-- /.row -->
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+          Visit <a href="https://select2.github.io/">Select2 documentation</a> for more examples and information about
+          the plugin.
+        </div>
+      </div>
+      <!-- /.box -->
+</div>
+
+
+
+{% endblock content %}
+{% block script %}
+
+<script src="{% static 'toastr/toastr.min.js' %}"></script>
+<script>
+  $(function () {
+      //Initialize Select2 Elements
+      $('.select2').select2()
+  });
+</script>
+{% endblock script %}

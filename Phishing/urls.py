@@ -34,4 +34,6 @@ urlpatterns = [
     path('pages/', include('pages.urls', namespace='pages')),
     # 发信配置
     path('smtp/', include('smtp.urls', namespace='smtp')),
+    # 任务管理
+    path('campaign/', include('campaigns.urls', namespace='campaign')),
 ]

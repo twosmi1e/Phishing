@@ -272,3 +272,17 @@ class DeleteGroup(LoginRequiredMixin, View):
         except Exception as e:
             return HttpResponse('{"status":"fail", "msg":"删除失败"}', content_type='application/json')
 
+########################################################################################################################
+## 分组详情
+########################################################################################################################
+class GroupDetail(LoginRequiredMixin, View):
+    def get(self, request, g_id):
+        web_title = 'group_manage'
+        web_func = 'group_detail'
+        group = Group.objects.get(id=int(g_id))
+        context = {
+            'web_title': web_title,
+            'web_func': web_func,
+            'group': group
+        }
+        return render(request, 'contacts/group_detail.html', context=context)

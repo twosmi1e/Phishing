@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  任务列表
+{% endblock title %}
+
+<!-- 主体 -->
+{% block content %}
+  <div class="col">
+    <p style="height: 2px;"></p>
+    <!-- 中间栏 -->
+    <div class="padder">
+      <!-- 任务列表 -->
+      <div>
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div style="border-left: 4px solid #003366; margin-bottom: 10px; margin-top: 10px; height: 25px;font-size: 18px;">
+              <span>&nbsp;&nbsp;任务列表</span>
+            </div>
+          </div>
+          <div class="panel-body container" style="height: 745px;">
+            <div class="module-option clearfix">
+              <form class="navbar-form pull-left " role="search" method="get" style="margin-top: 0px;">
+                <div class="form-group">
+                  <div class="input-group">
+                    <input type="text" class="form-control input-sm bg-light no-border rounded" name="keywords"
+                           placeholder="关键词搜索" style="width: 150px;">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-sm bg-auto rounded"><i class="fa fa-search"></i></button>
+                      </span>
+                  </div>
+                </div>
+              </form>
+            </div>
+
+
+         <div class="row" style="height: 610px;">
+                <div class="col-sm-12">
+
+                  <table class="table table-hover table-bordered dataTable" id="departtable" role="grid">
+
+                    <!-- 标题行 -->
+                    <thead>
+                    <tr role="row">
+                      <th class="text-center" rowspan="1" colspan="1" style="">ID</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">任务名称</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">任务状态</th>
+                      <th class="text-center" rowspan="1" colspan="1">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for campaign in campaigns.object_list %}
+                      <tr class="gradeX {% if forloop.counter|divisibleby:'2' %}odd{% else %}even{% endif %}"
+                          role="row">
+                        <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ campaign.name }}</td>
+                        <td class="text-center" style="vertical-align: middle;">{{ campaign.status }}</td>
+                        <td class="text-center" style="vertical-align: middle;">
+                            <button class="btn btn-info" data-toggle="modal" data-target="#EditDepartModal{{ campaign.id }}">详情</button>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteDepartModal{{ campaign.id }}">删除</button>
+                        </td>
+                      </tr>
+                    {% endfor %}
+
+                    </tbody>
+                  </table>
+
+
+
+                </div>
+              </div>
+            </div>
+
+            <!-- 页码 -->
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <ul class="pagination">
+                  <!-- 上一页 -->
+                  {% if campaigns.has_previous %}
+                    <li class="long"><a href="?{{ campaigns.previous_page_number.querystring }}">上一页</a></li>
+                  {% endif %}
+                  <!-- 页码 -->
+                  {% for page in campaigns.pages %}
+                    {% if page %}
+                      {% ifequal page campaigns.number %}
+                        <li class="active"><a href="?page={{ page }}">{{ page }}<span
+                                class="sr-only">(current)</span></a></li>
+                      {% else %}
+                        <li><a href="?{{ page.querystring }}">{{ page }}<span class="sr-only"></span></a></li>
+                      {% endifequal %}
+                    {% else %}
+                      <li><a href="">...<span class="sr-only"></span></a></li>
+                    {% endif %}
+                  {% endfor %}
+                  <!-- 下一页 -->
+                  {% if campaigns.has_next %}
+                    <li><a href="?{{ campaigns.next_page_number.querystring }}">下一页<span class="sr-only"></span></a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+
+{% endblock content %}
+{% block script %}
+
+
+<link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
+<script src="{% static 'toastr/toastr.min.js' %}"></script>
+{% endblock script %}
