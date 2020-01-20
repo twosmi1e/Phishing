@@ -29,7 +29,10 @@ app_name = 'campaigns'
 urlpatterns = [
     # 任务列表
     path('list/', CampaignListView.as_view(), name='campaign_list'),
-    # 添加任务
+    # 添加任务页面
     path('add/', AddCampaign.as_view(), name='campaign_add'),
-
+    # 添加任务
+    path('save/', SaveCampaign.as_view(), name='save_add'),
+    # 执行任务
+    path('run/<int:c_id>', celerytest.as_view(), name='run_campaign')
 ]

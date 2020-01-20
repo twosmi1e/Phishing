@@ -55,7 +55,7 @@
                           role="row">
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ campaign.name }}</td>
-                        <td class="text-center" style="vertical-align: middle;">{{ campaign.status }}</td>
+                        <td class="text-center" style="vertical-align: middle;">{{ campaign.get_status_display }}</td>
                         <td class="text-center" style="vertical-align: middle;">
                             <button class="btn btn-info" data-toggle="modal" data-target="#EditDepartModal{{ campaign.id }}">详情</button>
                             <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteDepartModal{{ campaign.id }}">删除</button>

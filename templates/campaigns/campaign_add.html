@@ -20,74 +20,159 @@
     <!-- Bootstrap time Picker -->
     <link rel="stylesheet" href="{% static 'adminlet-2.4.10/plugins/timepicker/bootstrap-timepicker.min.css' %}">
     <link rel="stylesheet" href="{% static 'adminlet-2.4.10/dist/css/AdminLTE.min.css' %}">
+    <!-- bootstrap datepicker -->
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/bower_components/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
 {% endblock css %}
 
 <!-- 主体 -->
 {% block content %}
-<div class="box box-default">
+<div class="box">
         <div class="box-header with-border">
-          <h3 class="box-title">Select2</h3>
-
-          <div class="box-tools pull-right">
-            <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
-            <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-remove"></i></button>
-          </div>
+          <h3 class="box-title">创建任务</h3>
         </div>
         <!-- /.box-header -->
         <div class="box-body">
-          <div class="row">
-            <div class="col-md-6">
-              <div class="form-group">
-                <label>Minimal</label>
-                <select class="form-control select2" style="width: 100%;">
-                  <option selected="selected">Alabama</option>
-                  <option>Alaska</option>
-                  <option>California</option>
-                  <option>Delaware</option>
-                  <option>Tennessee</option>
-                  <option>Texas</option>
-                  <option>Washington</option>
-                </select>
-              </div>
-              <!-- /.form-group -->
-              <div class="form-group">
-                <label>Multiple</label>
-                <select class="form-control select2" multiple="multiple" data-placeholder="Select a State"
-                        style="width: 100%;">
-                  <option>Alabama</option>
-                  <option>Alaska</option>
-                  <option>California</option>
-                  <option>Delaware</option>
-                  <option>Tennessee</option>
-                  <option>Texas</option>
-                  <option>Washington</option>
-                </select>
-              </div>
-            </div>
-            <!-- /.col -->
+            <div class="col-md-8 col-md-offset-2">
+                <form method="post" id="addCampaignForm">
+                  <div class="form-group">
+                      <label>任务名称</label>
+                      <input type="text" class="form-control" placeholder="任务名" name="name">
+                  </div>
 
-          </div>
-          <!-- /.row -->
+                  <div class="form-group">
+                      <label>开始时间</label>
+                      <input type="text" class="form-control" name="launch_date" id="launch_date">
+                  </div>
+
+                  <div class="form-group">
+                      <label>结束时间</label>
+                      <input type="text" class="form-control" name="sendby_date" id="sendby_date">
+                  </div>
+
+                  <div class="form-group">
+                    <label>选择分组</label>
+                    <select class="form-control select2" style="width: 100%;" name="group">
+                      {% for group in groups %}
+                          <option value="{{ group.id }}">{{ group.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <!-- /.form-group -->
+                  <div class="form-group">
+                    <label>选择邮件模板</label>
+                    <select class="form-control select2" style="width: 100%;" name="templet">
+                      {% for templet in templets %}
+                          <option value="{{ templet.id }}">{{ templet.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>选择钓鱼页面</label>
+                    <select class="form-control select2" style="width: 100%;" name="page">
+                      {% for page in pages %}
+                          <option value="{{ page.id }}">{{ page.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>选择服务器</label>
+                    <select class="form-control select2" multiple="multiple" data-placeholder="Select Servers"
+                            style="width: 100%;" name="server">
+                        {% for server in servers %}
+                            <option value="{{ server.id }}">{{ server.name }}</option>
+                        {% endfor %}
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>选择邮件头</label>
+                    <select class="form-control select2" style="width: 100%;" name="header">
+                      {% for header in headers %}
+                          <option value="{{ header.id }}">{{ header.name }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </form>
+                <div class="fc-button-group col-md-6 col-md-offset-3 ">
+                    <button class="btn btn-info" id="saveCampaign">保存</button>
+                    <button class="btn btn-default">清空</button>
+                </div>
+
+            </div>
         </div>
         <!-- /.box-body -->
         <div class="box-footer">
-          Visit <a href="https://select2.github.io/">Select2 documentation</a> for more examples and information about
-          the plugin.
+
         </div>
       </div>
       <!-- /.box -->
 </div>
 
 
-
 {% endblock content %}
 {% block script %}
+<script>
+//保存
+$(function () {
+    //提交表单
+    $('#saveCampaign').on('click', function () {
+        toastr.options = {
+                closeButton: false,
+                debug: false,
+                progressBar: false,
+                positionClass: "toast-top-right",
+                onclick: null,
+                showDuration: "300",
+                hideDuration: "1000",
+                timeOut: "5000",
+                extendedTimeOut: "1000",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut"
+              };
+        $.ajax({
+            cache: false,
+            type: "POST",
+            url: "{% url 'campaign:save_add' %}",
+            dataType: 'json',
+            data: $('#addCampaignForm').serialize(),
+            async: true,
+            beforeSend: function (xhr, settings) {
+                // 这里需要csrf_token的值，而不是代码
+                xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function (data) {
+                if (data.status == 'success') {
+                    toastr.options.timeOut = 1000;
+                    toastr.options.onHidden = function() { window.location.href = "{% url 'campaign:campaign_list' %}"; }
+                    toastr.success(data.msg);
+                } else if (data.status == 'fail') {
+                    toastr.options.timeOut = 1000;
+                    toastr.error(data.msg);
+                }
+            }
+        })
+    })
+})
+</script>
 
+<!-- bootstrap datepicker -->
+<script src="{% static 'adminlet-2.4.10/bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js' %}"></script>
 <script src="{% static 'toastr/toastr.min.js' %}"></script>
 <script>
   $(function () {
       //Initialize Select2 Elements
       $('.select2').select2()
+  });
+
+  $('#launch_date').datepicker({
+      autoclose: true,
+      format: 'yyyy-mm-dd'
+  });
+
+  $('#sendby_date').datepicker({
+      autoclose: true,
+      format: 'yyyy-mm-dd'
   });
 </script>
 {% endblock script %}
