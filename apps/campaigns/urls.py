@@ -33,6 +33,11 @@ urlpatterns = [
     path('add/', AddCampaign.as_view(), name='campaign_add'),
     # 添加任务
     path('save/', SaveCampaign.as_view(), name='save_add'),
+    # 删除任务
+    path('del/<int:ca_id>', DeleteCampaign.as_view(), name='del_campaign'),
     # 执行任务
-    path('run/<int:c_id>', celerytest.as_view(), name='run_campaign')
+    path('exec/<int:ca_id>', ExecCampaign.as_view(), name='exec_campaign'),
+    # 任务详情
+    path('detail/<int:ca_id>', CampaignDetail.as_view(), name='campaign_detail')
+
 ]

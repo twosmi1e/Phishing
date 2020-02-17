@@ -139,3 +139,5 @@ class EditPage(LoginRequiredMixin, View):
         else:
             return HttpResponse('{"status":"fail", "msg":"修改页面失败！"}', content_type='application/json')
 
+
+

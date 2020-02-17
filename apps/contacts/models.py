@@ -49,5 +49,17 @@ class Group(models.Model):
     def get_members(self):
         return "\n".join([m.name for m in self.group_members.all()])
 
+    def get_email_list(self):
+        email_list = []
+        for m in self.group_members.all():
+            email_list.append(m.email)
+        return email_list
+
+    def get_name_list(self):
+        name_list = []
+        for m in self.group_members.all():
+            name_list.append(m.name)
+        return name_list
+
     def __str__(self):
         return self.name

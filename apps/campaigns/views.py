@@ -46,7 +46,7 @@ from .task import *
 class CampaignListView(LoginRequiredMixin, View):
     def get(self, request):
         web_title = 'campaign_manage'
-        web_func = 'campaign_ist'
+        web_func = 'campaign_list'
         campaigns = Campaign.objects.all()
 
         keywords = request.GET.get('keywords', '')
@@ -78,6 +78,8 @@ class CampaignListView(LoginRequiredMixin, View):
             'display_chose': display_chose,
             'campaigns': campaigns,
         }
+
+
         return render(request, 'campaigns/campaign_list.html', context=context)
 
 
@@ -126,6 +128,51 @@ class SaveCampaign(LoginRequiredMixin, View):
             return HttpResponse('{"status":"success", "msg":"任务添加成功！"}', content_type='application/json')
         return HttpResponse('{"status":"fail", "msg":"任务内容不符合要求！"}', content_type='application/json')
 
+########################################################################################################################
+## 执行任务
+########################################################################################################################
+class ExecCampaign(LoginRequiredMixin, View):
+    def post(self, request, ca_id):
+        campaign = Campaign.objects.get(id=int(ca_id))
+
+        try:
+            task = post_email.delay(ca_id)
+            # 改变任务状态
+            campaign.status = 1
+            campaign.save()
+            return HttpResponse('{"status":"success", "msg":"执行成功"}', content_type='application/json')
+        except:
+            return HttpResponse('{"status":"failed", "msg":"执行失败"}', content_type='application/json')
 
 
+########################################################################################################################
+## 删除任务
+########################################################################################################################
+class DeleteCampaign(LoginRequiredMixin, View):
+    def post(self, request, ca_id):
+        try:
+            campaign = Campaign.objects.get(id=int(ca_id))
+            campaign.delete()
+            return HttpResponse('{"status":"success", "msg":"删除成功"}', content_type='application/json')
+        except Exception as e:
+            return HttpResponse('{"status":"fail", "msg":"删除失败"}', content_type='application/json')
+
+
+########################################################################################################################
+## 任务详情
+########################################################################################################################
+class CampaignDetail(LoginRequiredMixin, View):
+    def get(self, request, ca_id):
+        web_title = "campaign_manage"
+        web_func = "campaign_detail"
+        campaign = Campaign.objects.get(id=int(ca_id))
+
+        task = caculate_time.delay(ca_id)
+        context = {
+            'web_title': web_title,
+            'web_func': web_func,
+            'campaign': campaign,
+        }
+
+        return render(request, "campaigns/campaign_detail.html", context=context)
 

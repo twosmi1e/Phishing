@@ -55,10 +55,15 @@
                           role="row">
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ campaign.name }}</td>
-                        <td class="text-center" style="vertical-align: middle;">{{ campaign.get_status_display }}</td>
+                      {% if campaign.status == "2"%}
+                        <td class="text-center" style="vertical-align: middle; color: #00a65a">{{ campaign.get_status_display }}</td>
+                      {% else %}
+                        <td class="text-center" style="vertical-align: middle; color: #d33724">{{ campaign.get_status_display }}</td>
+                      {% endif %}
                         <td class="text-center" style="vertical-align: middle;">
-                            <button class="btn btn-info" data-toggle="modal" data-target="#EditDepartModal{{ campaign.id }}">详情</button>
-                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteDepartModal{{ campaign.id }}">删除</button>
+                            <a href="{% url 'campaigns:campaign_detail' campaign.id %}" class="btn btn-info">详情</a>
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#DeleteCampaignModal{{ campaign.id }}">删除</button>
+                            <button class="btn bg-purple" data-toggle="modal" data-target="#ExecCampaignModal{{ campaign.id }}">执行</button>
                         </td>
                       </tr>
                     {% endfor %}
@@ -113,6 +118,137 @@
 {% endblock content %}
 {% block script %}
 
+<!-- 删除框 -->
+{% for campaign in campaigns.object_list %}
+    <div class="modal fade modal-warning" id="DeleteCampaignModal{{ campaign.id }}">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">删除任务</h4>
+          </div>
+          <div class="modal-body">
+             <div class="row" id="modal.flashes"></div>
+              <form method="post" id="js_deleteCampaignForm{{ campaign.id }}">
+                  <div class="form-group">
+                      <p>是否删除该任务？</p>
+                  </div>
+              </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline pull-left" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-outline" id="js_deleteCampaign{{ campaign.id }}">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<script>
+//删除
+    $(function () {
+        $('#js_deleteCampaign{{ campaign.id }}').on('click', function () {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'campaigns:del_campaign' campaign.id %}",
+                data: $('#js_deleteCampaignForm{{ depart.id }}').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    // 这里需要csrf_token的值，而不是代码
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.options.timeOut = 1000;
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'campaigns:campaign_list' %}"; }
+                        toastr.success(data.msg);
+                    } else if (data.status == 'fail') {
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+        });
+    })
+
+</script>
+{% endfor %}
+
+<!-- 执行框 -->
+    {% for campaign in campaigns.object_list %}
+        <div class="modal fade" id="ExecCampaignModal{{ campaign.id }}">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">执行</h4>
+              </div>
+                <div class="modal-body">
+             <div class="row" id="modal.flashes"></div>
+              <form method="post" id="js_execCampaignForm{{ campaign.id }}">
+                  <div class="form-group">
+                      <p>执行该任务？</p>
+                  </div>
+              </form>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+            <button type="button" class="btn btn-primary" id="js_execCampaign{{ campaign.id }}">执行</button>
+          </div>
+        </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+        <script>
+        //执行任务
+        $(function () {
+            $('#js_execCampaign{{ campaign.id }}').on('click', function () {
+                toastr.options = {
+                    closeButton: false,
+                    debug: false,
+                    progressBar: false,
+                    positionClass: "toast-top-right",
+                    onclick: null,
+                    showDuration: "300",
+                    hideDuration: "1000",
+                    timeOut: "1000",
+                    extendedTimeOut: "1000",
+                    showEasing: "swing",
+                    hideEasing: "linear",
+                    showMethod: "fadeIn",
+                    hideMethod: "fadeOut"
+                };
+                $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url 'campaigns:exec_campaign' campaign.id %}",
+                    data: $('#js_execCampaign{{ campaign.id }}').serialize(),
+                    async: true,
+                    beforeSend: function (xhr, settings) {
+                      // 这里需要csrf_token的值，而不是代码
+                      xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    },
+                    success: function (data) {
+                      if (data.status == 'success') {
+                          toastr.options.timeOut = 1000;
+                          toastr.options.onHidden = function() { window.location.href = "{% url 'campaigns:campaign_list' %}"; }
+                          toastr.success(data.msg);
+                      } else if (data.status == 'fail') {
+                          toastr.error(data.msg);
+                      }
+                    }
+                });
+            })
+        })
+
+        </script>
+    {% endfor %}
 
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
 <script src="{% static 'toastr/toastr.min.js' %}"></script>

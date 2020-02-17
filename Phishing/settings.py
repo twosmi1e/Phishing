@@ -189,6 +189,8 @@ DEFAULT_FROM_EMAIL = 'xxxx'
 ## celery配置
 ########################################################################################################################
 # 添加celery配置
+#djcelery.setup_loader()
+
 BROKER_URL ='amqp://guest@127.0.0.1//'
 CELERY_RESULT_BACKEND = 'amqp://guest@127.0.0.1//'
 CELERY_ACCEPT_CONTENT = ['application/json']

@@ -28,7 +28,7 @@
         <div class="col-md-12">
           <div class="box box-info">
             <div class="box-header">
-              <h3 class="box-title">{{ templet.subject }}
+              <h3 class="box-title">{{ templet.name }}
               </h3>
               <!-- tools box -->
 
@@ -45,8 +45,9 @@
             </div>
             <!-- /.box-header -->
             <div class="box-body pad">
-              <form>
-                    <textarea name="text" class="ckeditor" id="text">
+              <form id="jd_editTempletForm">
+                    <input type="text" class="form-control" name="subject" placeholder="邮件标题" value="{{ templet.subject }}" />
+                    <textarea name="text" class="ckeditor" name="text">
                         {{ templet.text|safe }}
                     </textarea>
                   <script>
@@ -80,7 +81,7 @@ $(function () {
         //提交表单
         $('#js_SaveEdit').on('click', function () {
             CKupdate();
-            var text = $("#text").val();
+            //var text = $("#text").val();
             toastr.options = {
                 closeButton: false,
                 debug: false,
@@ -101,9 +102,7 @@ $(function () {
                 type: "POST",
                 url: "{% url 'templets:edit_templet' templet.id %}",
                 dataType: 'json',
-                data: {
-                    'text':text,
-                },
+                data: $('#jd_editTempletForm').serialize(),
                 async: true,
                 beforeSend: function (xhr, settings) {
                     // 这里需要csrf_token的值，而不是代码

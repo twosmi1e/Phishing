@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+  任务详情
+{% endblock title %}
+
+
+{% block css %}
+
+{% endblock css %}
+
+<!-- 主体 -->
+{% block content %}
+<div class="box">
+        <div class="box-header with-border">
+          <h3 class="box-title">任务详情</h3>
+        </div>
+        <!-- /.box-header -->
+        <div class="box-body">
+            <div class="row">
+                <h2 class="col-md-10">
+                    {{ campaign.name }}
+                </h2>
+                {% if campaign.status == "2" %}
+                    <h2 class="col-md-2" style="color: #00a65a">{{ campaign.get_status_display }}</h2>
+                {% else %}
+                    <h2 class="col-ma-2" style="color: #d33724">{{ campaign.get_status_display }}</h2>
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-md-4">任务开始时间：{{ campaign.launch_date }}</div>
+                <div class="col-md-4">任务结束时间：{{ campaign.sendby_date }}</div>
+                <div class="col-md-4">任务耗时：{{ campaign.complete_date }} s</div>
+            </div>
+            <div class="row">
+
+            </div>
+            <div class="row">
+                <div class="col-md-4"><p style="text-align: center">发送成功数量</p><h3 style="color: #00a65a; text-align: center">{{ campaign.success_num }}</h3></div>
+                <div class="col-md-4">发送失败数量：<h3 style="color: #d33724; text-decoration: none;">{{ campaign.failed_num }}</h3></div>
+                <div class="col-md-4">邮件已读数量：暂未实现</div>
+            </div>
+            <div class="row">
+
+            </div>
+        </div>
+        <!-- /.box-body -->
+        <div class="box-footer">
+
+        </div>
+      </div>
+      <!-- /.box -->
+</div>
+
+
+{% endblock content %}
+{% block script %}
+<script>
+
+</script>
+
+{% endblock script %}

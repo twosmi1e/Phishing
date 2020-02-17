@@ -130,10 +130,10 @@ class DeleteTemplet(LoginRequiredMixin, View):
 class EditTemplet(LoginRequiredMixin, View):
     def post(self, request, t_id):
         templet = Templet.objects.get(id=int(t_id))
-        #edit_templet_form = AddTempletForm(request.POST)
-        edited_text = request.POST.get('text')
-        if edited_text:
-            templet.text = edited_text
+        edit_templet_form = AddTempletForm(request.POST)
+        if edit_templet_form:
+            templet.subject = request.POST.get('subject')
+            templet.text = request.POST.get('text')
             templet.save()
             return HttpResponse('{"status":"success", "msg":"修改模板成功！"}', content_type='application/json')
         else:
