@@ -7,7 +7,6 @@
 
 {% block css %}
 
-<script src="{% static 'ckeditor/ckeditor.js' %}"></script>
 {% endblock css %}
 
 <!-- 主体 -->
@@ -65,7 +64,7 @@
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ page.name }}</td>
                         <td class="text-center" style="vertical-align: middle;">
-                            <a href="{% url 'pages:page_detail' page.id %}" class="btn btn-info">详情</a>
+                            <button class="btn btn-info" data-toggle="modal" data-target="#EditPageModal{{ page.id }}">编辑</button>
                             <button class="btn btn-danger" data-toggle="modal" data-target="#DeletePageModal{{ page.id }}">删除</button>
                         </td>
                       </tr>
@@ -124,7 +123,7 @@
 
 <!-- 添加框 -->
 <div class="modal fade" id="AddPageModal">
-  <div class="modal-dialog" style="width: 1000px;">
+  <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -139,30 +138,7 @@
             </div>
             <label class="control-label" for="redirect_url">跳转链接:</label>
             <div class="form-group">
-                <input type="text" class="form-control" placeholder="可不填" name="redirect_url" />
-            </div>
-            <label class="control-label" for="html">HTML代码:</label>
-            <div class="form-group">
-                <textarea class="ckeditor" name="html"></textarea>
-            </div>
-              <!-- 设置编辑框高度 -->
-            <script>
-                CKEDITOR.replace('html', {
-                    height: 550,
-                });
-            </script>
-
-            <div class="checkbox">
-                <label for="capture_username">
-                    <input type="checkbox" name="capture_username" value="true">
-                    抓取输入用户名
-                </label>
-            </div>
-            <div class="checkbox">
-                <label for="capture_username">
-                    <input type="checkbox" name="capture_password" value="true">
-                    抓取输入密码
-                </label>
+                <input type="text" class="form-control" placeholder="填写目标钓鱼网站" name="redirect_url" />
             </div>
           </form>
 
@@ -182,15 +158,9 @@
 <script>
 //添加按钮提交
     $(function () {
-        //处理ckeditor的值
-        function CKupdate() {
-            for (instance in CKEDITOR.instances)
-                CKEDITOR.instances[instance].updateElement();
-        }
 
         //提交表单
         $('#js_addPage').on('click', function () {
-            CKupdate();
             toastr.options = {
                 closeButton: false,
                 debug: false,
@@ -280,6 +250,7 @@
                         toastr.options.onHidden = function() { window.location.href = "{% url 'pages:page_list' %}"; }
                         toastr.success(data.msg);
                     } else if (data.status == 'fail') {
+                        toastr.options.timeOut = 1000;
                         toastr.error(data.msg);
                     }
                 }
@@ -287,7 +258,67 @@
         });
     });
 </script>
+<!-- 编辑框 -->
+<div class="modal fade" id="EditPageModal{{ page.id }}">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">编辑钓鱼页面</h4>
+      </div>
+      <div class="modal-body">
+          <form method="post" id="js_editPageForm{{ page.id }}">
+              <label class="control-label" for="name">页面名称:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="名称" name="name" value="{{ page.name }}"/>
+            </div>
+            <label class="control-label" for="redirect_url">跳转链接:</label>
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="填写目标钓鱼网站" name="redirect_url" value="{{ page.redirect_url }}"/>
+            </div>
+          </form>
 
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+        <button type="button" class="btn btn-primary" id="js_editPage{{ page.id }}">保存</button>
+      </div>
+    </div>
+    <!-- /.modal-content -->
+  </div>
+  <!-- /.modal-dialog -->
+</div>
+<!-- /.modal -->
+<script>
+    $(function () {
+        $('js_editPage{{ page.id }}').on('click', function () {
+            $.ajax({
+                cache: false,
+                type: "POST",
+                url: "{% url 'pages:edit_page' page.id %}",
+                dataType: 'json',
+                data: $('#js_editPageForm{{ page.id }}').serialize(),
+                async: true,
+                beforeSend: function (xhr, settings) {
+                    // 这里需要csrf_token的值，而不是代码
+                    xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                },
+                success: function (data) {
+                    if (data.status == 'success') {
+                        toastr.options.timeOut = 1000;
+                        toastr.options.onHidden = function() { window.location.href = "{% url 'pages:page_list' %}"; }
+                        toastr.success(data.msg);
+                    } else if (data.status == 'fail') {
+                        toastr.options.timeOut = 1000;
+                        toastr.error(data.msg);
+                    }
+                }
+            });
+        })
+    })
+
+</script>
 {% endfor %}
 
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>

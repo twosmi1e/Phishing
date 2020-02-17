@@ -27,7 +27,7 @@ import datetime
 from .forms import *
 from .models import *
 from utils.mixin_utils import *
-
+from .task import *
 
 ########################################################################################################################
 ## 首页类视图
@@ -80,18 +80,7 @@ class AddPage(LoginRequiredMixin, View):
         if add_page.is_valid():
             page = Page()
             page.name = request.POST.get('name')
-            page.html = request.POST.get('html')
             page.redirect_url = request.POST.get('redirect_url')
-            if request.POST.get('capture_password'):
-                page.capture_password = request.POST.get('capture_password')
-            else:
-                page.capture_password = False
-
-            if request.POST.get('capture_username'):
-                page.capture_username = request.POST.get('capture_username')
-            else:
-                page.capture_password = False
-
             page.save()
             return HttpResponse('{"status":"success", "msg":"添加页面成功！"}', content_type='application/json')
         else:
@@ -109,35 +98,33 @@ class DeletePage(LoginRequiredMixin, View):
         except Exception as e:
             return HttpResponse('{"status":"fail", "msg":"删除失败"}', content_type='application/json')
 
-########################################################################################################################
-## 页面详情
-########################################################################################################################
-class PageDetail(LoginRequiredMixin, View):
-    def get(self, request, p_id):
-        web_title = 'page_manage'
-        web_func = 'page_detail'
-        page = Page.objects.get(id=int(p_id))
-        context = {
-            'web_title': web_title,
-            'wen_func': web_func,
-            'page': page
-        }
-        return render(request, 'pages/page_detail.html', context=context)
 
 ########################################################################################################################
 ## 编辑页面
 ########################################################################################################################
 class EditPage(LoginRequiredMixin, View):
     def post(self, request, p_id):
-        page = Page.objects.get(id=int(p_id))
-        #edit_templet_form = AddTempletForm(request.POST)
-        edited_html = request.POST.get('html')
-        if edited_html:
-            page.html = edited_html
+        edit_page = AddPageForm(request.POST)
+        if edit_page.is_valid():
+            page = Page.objects.get(id=int(p_id))
+            page.name = request.POST.get('name')
+            page.redirect_url = request.POST.get('redirect_url')
             page.save()
-            return HttpResponse('{"status":"success", "msg":"修改页面成功！"}', content_type='application/json')
+            return HttpResponse('{"status":"success", "msg":"编辑页面成功！"}', content_type='application/json')
         else:
-            return HttpResponse('{"status":"fail", "msg":"修改页面失败！"}', content_type='application/json')
+            return HttpResponse('{"status":"fail", "msg":"编辑页面失败！"}', content_type='application/json')
+
+########################################################################################################################
+## 点击记录
+########################################################################################################################
+class ClickRecord(View):
+    def get(self, request, v_id):
+        agent = request.META['HTTP_USER_AGENT']
+        ip = request.META['REMOTE_ADDR']
+
+        task = add_record.delay(agent, ip, v_id)
+
+        return render(request, "pages/page_for_phishing.html", context=None)
 
 
 
