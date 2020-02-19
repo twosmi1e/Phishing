@@ -290,9 +290,10 @@
   <!-- /.modal-dialog -->
 </div>
 <!-- /.modal -->
+
 <script>
     $(function () {
-        $('js_editPage{{ page.id }}').on('click', function () {
+        $('#js_editPage{{ page.id }}').on('click', function () {
             $.ajax({
                 cache: false,
                 type: "POST",

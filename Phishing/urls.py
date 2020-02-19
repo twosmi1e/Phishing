@@ -36,4 +36,6 @@ urlpatterns = [
     path('smtp/', include('smtp.urls', namespace='smtp')),
     # 任务管理
     path('campaign/', include('campaigns.urls', namespace='campaign')),
+    # 控制面板
+    path('dashboard/', include('dashboard.urls', namespace='dashboard')),
 ]

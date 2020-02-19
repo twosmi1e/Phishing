@@ -27,7 +27,7 @@ from smtp.models import EmailServer
 # 邮件头
 from smtp.models import EmailHeader
 
-
+CLICK_RECORD_URL = "http://127.0.0.1:8000/pages/click/"
 
 def _format_addr(s):
     name, addr = parseaddr(s)
@@ -70,6 +70,8 @@ def post_email(campaign_id):
     # 获取发送目标
     target_name_list = campaign.group.get_name_list()
     target_email_list = campaign.group.get_email_list()
+
+    id_email_dict = campaign.group.get_id_email_dict()
     #print(target_name_list)
     #print(target_email_list)
     # 获取邮件头
@@ -85,32 +87,36 @@ def post_email(campaign_id):
         server.login(server_user, server_pass)
     except:
         print("login failed")
+        campaign.status = 3
+        campaign.sendby_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        campaign.save()
+        flag = 0
 
+    if flag:
+        # 构造邮件内容
+        for (id, email) in id_email_dict:
+            to_addr = email
+            url = CLICK_RECORD_URL+str(id)
+            msg = MIMEText(email_text % (to_addr, url), 'HTML', 'utf-8')
+            msg['To'] = _format_addr('<%s>' % to_addr)
+            msg['From'] = _format_addr('%s<%s>' % (from_name, from_addr))
+            msg['Subject'] = Header('%s' % email_subject, 'utf-8').encode()
+            try:
+                server.sendmail(server_user, to_addr, msg.as_string())
+                # 降低发信频率 避免被拦截
+                time.sleep(3)
+                campaign.success_num = campaign.success_num+1
+                print("send success")
+            except smtplib.SMTPException as e:
+                campaign.failed_num = campaign.failed_num+1
+                print(e)
 
-    # 构造邮件内容
-    for email in target_email_list:
-        to_addr = email
-        msg = MIMEText(email_text % to_addr, 'HTML', 'utf-8')
-        msg['To'] = _format_addr('<%s>' % to_addr)
-        msg['From'] = _format_addr('%s<%s>' % (from_name, from_addr))
-        msg['Subject'] = Header('%s' % email_subject, 'utf-8').encode()
-        try:
-            server.sendmail(server_user, to_addr, msg.as_string())
-            # 降低发信频率 避免被拦截
-            time.sleep(3)
-            campaign.success_num = campaign.success_num+1
-            print("send success")
-        except smtplib.SMTPException as e:
-            campaign.failed_num = campaign.failed_num+1
-            print(e)
-
-    # 修改任务状态
-    campaign.status = 2
-    # 任务结束时间
-    campaign.sendby_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    campaign.save()
-
-    print("mission complete!")
+        # 修改任务状态
+        campaign.status = 2
+        # 任务结束时间
+        campaign.sendby_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        campaign.save()
+        print("mission complete!")
 
 
 

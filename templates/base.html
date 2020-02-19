@@ -244,13 +244,21 @@ desired effect
 {#        <li><a href="{% url 'assets:index' %}"><i class="fa fa-table"></i> <span>资产总表</span></a></li>#}
 
       <!-- 仪表盘 -->
-          <li class="treeview" style="height: auto" {% ifequal web_title 'dashboard' %}class="active"{% endifequal %}>
+          <li class="treeview" {% ifequal web_title '' %}class="active"{% endifequal %}>
               <a href="#">
                   <i class="fa fa-dashboard"></i><span>仪表盘</span>
                   <span class="pull-right-container">
                       <i class="fa fa-angle-left pull-right"></i>
                   </span>
               </a>
+              <ul class="treeview-menu">
+                  <li>
+                      <a href="{% url 'dashboard:dashboard' %}"><i class="fa fa-circle-o"></i>数据统计</a>
+                  </li>
+                  <li>
+                      <a href="{% url 'dashboard:click_record' %}"><i class="fa fa-circle-o"></i>点击记录</a>
+                  </li>
+              </ul>
           </li>
       <!-- 邮件地址 -->
           <li class="treeview" {% ifequal web_title '' %}class="active"{% endifequal %}>

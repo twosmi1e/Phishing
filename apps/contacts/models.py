@@ -61,5 +61,11 @@ class Group(models.Model):
             name_list.append(m.name)
         return name_list
 
+    def get_id_email_dict(self):
+        id_email_dict = []
+        for m in self.group_members.all():
+            id_email_dict.append((m.id, m.email))
+        return id_email_dict
+
     def __str__(self):
         return self.name

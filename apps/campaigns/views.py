@@ -140,7 +140,7 @@ class ExecCampaign(LoginRequiredMixin, View):
             # 改变任务状态
             campaign.status = 1
             campaign.save()
-            return HttpResponse('{"status":"success", "msg":"执行成功"}', content_type='application/json')
+            return HttpResponse('{"status":"success", "msg":"开始执行"}', content_type='application/json')
         except:
             return HttpResponse('{"status":"failed", "msg":"执行失败"}', content_type='application/json')
 
@@ -175,4 +175,7 @@ class CampaignDetail(LoginRequiredMixin, View):
         }
 
         return render(request, "campaigns/campaign_detail.html", context=context)
+
+
+
 

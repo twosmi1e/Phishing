@@ -3,11 +3,11 @@ from django.db import models
 
 
 # Create your models here.
-STATUS=(
+STATUS = (
      ('0','未开始'),
      ('1','执行中'),
      ('2','已完成'),
-     ('3','已结束'),
+     ('3','执行错误'),
      )
 
 
@@ -29,7 +29,6 @@ class Campaign(models.Model):
     success_num = models.IntegerField(blank=True, default=0, verbose_name="发送成功次数")
     failed_num = models.IntegerField(blank=True, default=0, verbose_name="发送失败次数")
     opened_num = models.IntegerField(blank=True, default=0, verbose_name="已读邮件数")
-
 
     class Meta:
         verbose_name = "发送任务"
