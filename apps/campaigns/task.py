@@ -66,7 +66,7 @@ def post_email(campaign_id):
     # 获取邮件内容
     email_subject = campaign.templet.subject
     email_text = campaign.templet.text
-    #print(email_text)
+
     # 获取发送目标
     target_name_list = campaign.group.get_name_list()
     target_email_list = campaign.group.get_email_list()

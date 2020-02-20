@@ -56,9 +56,9 @@
                         <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
                         <td class="text-center" style="vertical-align : middle;">{{ campaign.name }}</td>
                       {% if campaign.status == "2"%}
-                        <td class="text-center" style="vertical-align: middle; color: #00a65a">{{ campaign.get_status_display }}</td>
+                        <td class="text-center" style="vertical-align: middle;"><span class="badge bg-green">{{ campaign.get_status_display }}</span></td>
                       {% else %}
-                        <td class="text-center" style="vertical-align: middle; color: #d33724">{{ campaign.get_status_display }}</td>
+                        <td class="text-center" style="vertical-align: middle;"><span class="badge bg-red">{{ campaign.get_status_display }}</span></td>
                       {% endif %}
                         <td class="text-center" style="vertical-align: middle;">
                             <a href="{% url 'campaigns:campaign_detail' campaign.id %}" class="btn btn-info">详情</a>

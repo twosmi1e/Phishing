@@ -28,29 +28,101 @@
                     <h2 class="col-ma-2" style="color: #d33724">{{ campaign.get_status_display }}</h2>
                 {% endif %}
             </div>
-            <div class="row">
-                <div class="col-md-4">任务开始时间：{{ campaign.launch_date }}</div>
-                <div class="col-md-4">任务结束时间：{{ campaign.sendby_date }}</div>
-                <div class="col-md-4">任务耗时：{{ campaign.complete_date }} s</div>
-            </div>
+
             <div class="row">
 
             </div>
             <div class="row">
-                <div class="col-md-4"><p style="text-align: center">发送成功数量</p><h3 style="color: #00a65a; text-align: center">{{ campaign.success_num }}</h3></div>
-                <div class="col-md-4">发送失败数量：<h3 style="color: #d33724; text-decoration: none;">{{ campaign.failed_num }}</h3></div>
-                <div class="col-md-4">邮件已读数量：暂未实现</div>
+                <div class="col-md-4">
+                    <div class="info-box">
+                      <!-- Apply any bg-* class to to the icon to color it -->
+                      <span class="info-box-icon bg-green"><i class="fa fa-flag"></i></span>
+                      <div class="info-box-content">
+                        <span class="info-box-text">成功发送</span>
+                        <span class="info-box-number" style="color: green">{{ campaign.success_num }}</span>
+                      </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div>
+                <div class="col-md-4">
+                    <div class="info-box">
+                      <!-- Apply any bg-* class to to the icon to color it -->
+                      <span class="info-box-icon bg-red"><i class="fa fa-exclamation-triangle"></i></span>
+                      <div class="info-box-content">
+                        <span class="info-box-text">发送失败</span>
+                        <span class="info-box-number" style="color: red">{{ campaign.failed_num }}</span>
+                      </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div>
+                <div class="col-md-4">
+                    <div class="info-box">
+                      <!-- Apply any bg-* class to to the icon to color it -->
+                      <span class="info-box-icon bg-yellow"><i class="fa fa-calendar-minus-o"></i></span>
+                      <div class="info-box-content">
+                        <span class="info-box-text">任务耗时</span>
+                        <span class="info-box-number">{{ campaign.complete_date }}s</span>
+                      </div><!-- /.info-box-content -->
+                    </div><!-- /.info-box -->
+                </div>
             </div>
-            <div class="row">
 
-            </div>
         </div>
         <!-- /.box-body -->
         <div class="box-footer">
-
+            <span style="float: right">{{ campaign.launch_date }}～{{ campaign.sendby_date }}</span>
         </div>
       </div>
       <!-- /.box -->
+    <div class="box">
+            <div class="box-header">
+              <h3 class="box-title">任务配置表</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body no-padding">
+              <table class="table table-condensed">
+                <tr>
+                  <th style="width: 10px">#</th>
+                  <th>{{ campaign.name }}</th>
+                  <th>配置</th>
+                </tr>
+                <tr>
+                  <td>1.</td>
+                  <td>分组</td>
+                  <td>
+                    {{ campaign.group.name }}
+                  </td>
+
+                </tr>
+                <tr>
+                  <td>2.</td>
+                  <td>邮件模板</td>
+                  <td>
+                    {{ campaign.templet.name }}
+                  </td>
+
+                </tr>
+                <tr>
+                  <td>3.</td>
+                  <td>邮件服务器</td>
+                  <td>
+                    {{ campaign.server.name }}
+                  </td>
+
+                </tr>
+                <tr>
+                  <td>4.</td>
+                  <td>邮件头</td>
+                  <td>
+                    {{ campaign.header.name }}
+                  </td>
+
+                </tr>
+              </table>
+            </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
 </div>
 
 
