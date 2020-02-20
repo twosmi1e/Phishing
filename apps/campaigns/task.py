@@ -46,6 +46,7 @@ def caculate_time(campaign_id):
 
 @shared_task()
 def post_email(campaign_id):
+    flag = 1 # 标记任务是否正确执行
     # 获取任务对象
     campaign = Campaign.objects.get(id=int(campaign_id))
 
