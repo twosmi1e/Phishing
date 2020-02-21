@@ -13,7 +13,7 @@ Django+celery+rabbitmq
 
 
 ## TODO-List
-- [ ] task增加报错处理
+- [x] task增加报错处理
 - [ ] 添加目标处批量导入邮件发送目标
 - [ ] 丰富dashboard页面
 - [ ] 邮件池轮询发送
