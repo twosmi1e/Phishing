@@ -28,7 +28,6 @@ from .forms import *
 from .models import *
 from utils.mixin_utils import *
 from .task import *
-
 ########################################################################################################################
 ## 首页类视图
 ########################################################################################################################
@@ -114,17 +113,38 @@ class EditPage(LoginRequiredMixin, View):
         else:
             return HttpResponse('{"status":"fail", "msg":"编辑页面失败！"}', content_type='application/json')
 
+
+########################################################################################################################
+## 切换页面
+########################################################################################################################
+class SelectPage(LoginRequiredMixin, View):
+    def post(self, request, p_id):
+        global select_page_id
+        select_page_id = p_id
+        if select_page_id:
+            return HttpResponse('{"status":"success", "msg":"切换页面成功！"}', content_type='application/json')
+        else:
+            return HttpResponse('{"status":"fail", "msg":"切换页面失败！"}', content_type='application/json')
+
+
 ########################################################################################################################
 ## 点击记录
 ########################################################################################################################
 class ClickRecord(View):
     def get(self, request, v_id):
+        global select_page_id
         agent = request.META['HTTP_USER_AGENT']
         ip = request.META['REMOTE_ADDR']
 
         task = add_record.delay(agent, ip, v_id)
+        # 获取跳转链接
+        page = Page.objects.get(id=int(select_page_id))
+        redirect_url = page.redirect_url
 
-        return render(request, "pages/page_for_phishing.html", context=None)
+        context = {
+            'r_url': redirect_url,
+        }
+        return render(request, "pages/page_for_phishing.html", context=context)
 
 
 

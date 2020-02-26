@@ -36,5 +36,7 @@ urlpatterns = [
     # 编辑页面
     path('edit/<int:p_id>', EditPage.as_view(), name='edit_page'),
     # 点击记录
-    path('click/<int:v_id>', ClickRecord.as_view(), name='click_record')
+    path('click/<int:v_id>', ClickRecord.as_view(), name='click_record'),
+    # 切换页面
+    path('select/<int:p_id>', SelectPage.as_view(), name='select_page')
 ]
