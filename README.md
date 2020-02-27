@@ -19,3 +19,4 @@ Django+celery+rabbitmq
 - [ ] 丰富dashboard页面
 - [ ] 邮件池轮询发送
 - [ ] 列表增加排序搜索功能
+- [ ] 通知功能
