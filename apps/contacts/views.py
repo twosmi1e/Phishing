@@ -280,9 +280,16 @@ class GroupDetail(LoginRequiredMixin, View):
         web_title = 'group_manage'
         web_func = 'group_detail'
         group = Group.objects.get(id=int(g_id))
+
+        id_list = Group.get_id_list(group)
+        member_list = []
+        for id in id_list:
+            linkman = Linkman.objects.get(id=int(id))
+            member_list.append(linkman)
         context = {
             'web_title': web_title,
             'web_func': web_func,
-            'group': group
+            'group': group,
+            'members': member_list,
         }
         return render(request, 'contacts/group_detail.html', context=context)

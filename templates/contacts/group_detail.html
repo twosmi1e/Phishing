@@ -31,7 +31,71 @@
               <h3 class="box-title">{{ page.subject }}
               </h3>
               <!-- tools box -->
+                <div class="row" style="height: 610px;">
+                <div class="col-sm-12">
 
+                  <table class="table table-hover table-bordered dataTable" id="linkmantable" role="grid">
+
+                    <!-- 标题行 -->
+                    <thead>
+                    <tr role="row">
+                      <th class="text-center" rowspan="1" colspan="1" style="">ID</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">姓名</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">邮箱地址</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">部门</th>
+                      <th class="text-center sorting" rowspan="1" colspan="1" style="">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for member in members %}
+                      <tr class="gradeX {% if forloop.counter|divisibleby:'2' %}odd{% else %}even{% endif %}"
+                          role="row">
+                        <td class="text-center" style="vertical-align : middle;">{{ forloop.counter }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ member.name }}</td>
+                        <td class="text-center" style="vertical-align : middle;">{{ member.email }}</td>
+                        <td class="text-center" style="vertical-align: middle;">{{ member.depart }}</td>
+                        <td class="text-center" style="vertical-align: middle;">
+                            <a class="btn btn-danger" data-toggle="modal" data-target="#DeleteLinkmanModal{{ member.id }}">删除</a>
+                        </td>
+                      </tr>
+                    {% endfor %}
+
+                    </tbody>
+                  </table>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- 页码 -->
+            <div class="row">
+              <div class="col-md-12 text-center">
+                <ul class="pagination">
+                  <!-- 上一页 -->
+                  {% if members.has_previous %}
+                    <li class="long"><a href="?{{ members.previous_page_number.querystring }}">上一页</a></li>
+                  {% endif %}
+                  <!-- 页码 -->
+                  {% for page in members.pages %}
+                    {% if page %}
+                      {% ifequal page members.number %}
+                        <li class="active"><a href="?page={{ page }}">{{ page }}<span
+                                class="sr-only">(current)</span></a></li>
+                      {% else %}
+                        <li><a href="?{{ page.querystring }}">{{ page }}<span class="sr-only"></span></a></li>
+                      {% endifequal %}
+                    {% else %}
+                      <li><a href="">...<span class="sr-only"></span></a></li>
+                    {% endif %}
+                  {% endfor %}
+                  <!-- 下一页 -->
+                  {% if members.has_next %}
+                    <li><a href="?{{ members.next_page_number.querystring }}">下一页<span class="sr-only"></span></a>
+                    </li>
+                  {% endif %}
+                </ul>
+              </div>
+            </div>
 
               <!-- /. tools -->
             </div>
@@ -41,8 +105,8 @@
 
       </div>
       <!-- ./row -->
-      </div>
     </section>
+
   </div>
     <!-- /.content -->
   </div>
@@ -50,6 +114,12 @@
 {% endblock %}
 
 {% block script %}
+<script>
+
+
+</script>
+
+
 
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
 <script src="{% static 'toastr/toastr.min.js' %}"></script>
