@@ -3,8 +3,10 @@ from django.contrib import admin
 # Register your models here.
 from .models import *
 
+
 @admin.register(Campaign)
 class CampaignAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'create_date', 'group', 'page', 'server', 'header')
+    fields = ['name', 'group', 'templet', 'page', 'servers', 'header']
+    list_display = ('id', 'name', 'group', 'templet', 'page', 'get_servers', 'header')
 
 

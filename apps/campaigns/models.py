@@ -19,11 +19,11 @@ class Campaign(models.Model):
     complete_date = models.CharField(blank=True, null=True, verbose_name="完成耗时", default="0", max_length=10)
     status = models.CharField(max_length=20, verbose_name="任务状态", choices=STATUS, default="0")
 
-    group = models.ForeignKey('contacts.Group', verbose_name="分组", on_delete=models.DO_NOTHING)
-    templet = models.ForeignKey('templets.Templet', verbose_name="邮件模板", on_delete=models.DO_NOTHING, default="")
-    page = models.ForeignKey('pages.Page', verbose_name="钓鱼页面", on_delete=models.DO_NOTHING)
-    server = models.ForeignKey('smtp.EmailServer', verbose_name="邮件服务器", on_delete=models.DO_NOTHING)
-    header = models.ForeignKey('smtp.EmailHeader', verbose_name="邮件头", on_delete=models.DO_NOTHING)
+    group = models.ForeignKey('contacts.Group', verbose_name="分组", on_delete=models.DO_NOTHING, null=True, blank=True)
+    templet = models.ForeignKey('templets.Templet', verbose_name="邮件模板", on_delete=models.DO_NOTHING, null=True, blank=True)
+    page = models.ForeignKey('pages.Page', verbose_name="钓鱼页面", on_delete=models.DO_NOTHING, null=True, blank=True)
+    servers = models.ManyToManyField('smtp.EmailServer', verbose_name="邮件服务器")
+    header = models.ForeignKey('smtp.EmailHeader', verbose_name="邮件头", on_delete=models.DO_NOTHING, null=True, blank=True)
 
     # 任务结果数据统计
     success_num = models.IntegerField(blank=True, default=0, verbose_name="发送成功次数")
@@ -36,5 +36,8 @@ class Campaign(models.Model):
 
     def __str__(self):
         return self.name
+
+    def get_servers(self):
+        return "\n".join([s.name for s in self.servers.all()])
 
 

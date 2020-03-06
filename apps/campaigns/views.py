@@ -115,14 +115,19 @@ class SaveCampaign(LoginRequiredMixin, View):
     def post(self, request):
         add_campaign = AddCampaignForm(request.POST)
         if add_campaign != '':
-            campaign = Campaign()
-            campaign.name = request.POST.get('name')
-            campaign.launch_date = request.POST.get('launch_date')
-            campaign.sendby_date = request.POST.get('sendby_date')
+            campaign = Campaign.objects.create(name=request.POST.get('name'))
+
+
             campaign.group = Group.objects.get(id=int(request.POST.get('group')))
             campaign.templet = Templet.objects.get(id=int(request.POST.get('templet')))
             campaign.page = Page.objects.get(id=int(request.POST.get('page')))
-            campaign.server = EmailServer.objects.get(id=int(request.POST.get('server')))
+
+            server_list = request.POST.getlist('servers')
+            print(server_list)
+            for i in server_list:
+                print(i)
+                campaign.servers.add(i)
+
             campaign.header = EmailHeader.objects.get(id=int(request.POST.get('header')))
             campaign.save()
             return HttpResponse('{"status":"success", "msg":"任务添加成功！"}', content_type='application/json')
