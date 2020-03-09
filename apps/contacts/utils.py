@@ -8,28 +8,15 @@
 
 # encoding=utf-8
 import requests
-import redis
 
 appkey = "dingsb2v8htmrjfwi4sn"
 appsecret = "xEIdfFwMIlEW2qhW3sYyVwFIvoiGDrHDnrLHmeBd69lDERCulfAEgR9-YTTlHAn1"
 
 
-host = "ci.redis.cnhz.shishike.com"
-pwd = "!uwpXayg8yYSze2zyZpKD"
-port = 6379
-db = 42
-
-def ConnectRedis():
-    pool = redis.ConnectionPool(host=host, port=port, password=pwd, db=db)
-    rc = redis.Redis(connection_pool=pool)
-    return rc
-
 class DingTalkInterface(object):
     def __init__(self):
         self.appkey = appkey
         self.appsecret = appsecret
-        self.conn = ConnectRedis()
-
 
     def get_access_token(self):
         try:
@@ -45,75 +32,119 @@ class DingTalkInterface(object):
             print(e)
             return None
 
-    def get_department_id(self):
-        try:
-            access_key = self.get_access_token()
-            url = "https://oapi.dingtalk.com/department/list?access_token=%s&fetch_child=true&id=67424205" % access_key
-            s = requests.session()
-            response = s.get(url, verify=False).json()
-            if response["errcode"] == 0:
-                for department in response["department"]:
-                    self.conn.set(department['name'], department['id'])
-        except Exception as e:
-            print(e)
-
-    def get_depart_parent_id(self, department_name):
-        try:
-            department_id = self.conn.get(department_name)
-            access_token = self.get_access_token()
-            url = "https://oapi.dingtalk.com/department/list_parent_depts_by_dept?access_token=%s&id=%s" % (
-                access_token, department_id.decode("utf-8"))
-            print(url)
-            s = requests.session()
-            res = s.get(url=url, verify=False).json()
-            print(res)
-            if res["errcode"] == 0:
-                parent_id = res['parentIds'][0]
-                return parent_id
-            return None
-        except Exception as e:
-            print(e)
-            return None
-
-    def get_user_id_by_department(self, department_id):
+    # 获取权限范围
+    def get_scope(self):
         try:
             access_token = self.get_access_token()
-            url = "https://oapi.dingtalk.com/user/getDeptMember?access_token=%s&deptId=%s" % (
-            access_token, department_id)
-            s =  requests.session()
-            res = s.get(url=url, verify=False).json()
+            url = "https://oapi.dingtalk.com/auth/scopes"
+            r = requests.get(url, params={'access_token':access_token})
+            res = r.json()
+
             if res["errcode"] == 0:
-                user_id = res['userIds']
-                return user_id
-            return None
+                depart_id_list = res['auth_org_scopes']['authed_dept']
+                return depart_id_list
         except Exception as e:
             print(e)
             return None
-    def get_email_by_user_id(self,user_id):
+
+    # 获取子部门
+    def get_sub_department(self, id):
         try:
-            if user_id:
-                access_token = self.get_access_token()
-                url = "https://oapi.dingtalk.com/user/get?access_token=%s&userid=%s" % (
-                access_token, user_id[0])
-                s =  requests.session()
-                res = s.get(url=url, verify=False).json()
-                if res["errcode"] == 0:
-                    user_id = res['email']
-                    return user_id
+            access_token = self.get_access_token()
+            url = "https://oapi.dingtalk.com/department/list_ids"
+            r = requests.get(url, params={'access_token':access_token, 'id':id})
+            res = r.json()
+
+            if res["errcode"] == 0:
+                sub_dep_id_list = res["sub_dept_id_list"]
+                return sub_dep_id_list
+        except Exception as e:
+            print(e)
             return None
+
+    # 获取部门列表
+    def get_department_list(self, id):
+        try:
+            access_token = self.get_access_token()
+            url = "https://oapi.dingtalk.com/department/list"
+            r = requests.get(url, params={'access_token': access_token, 'fetch_child': True, 'id': id})
+            res = r.json()
+
+            if res["errcode"] == 0:
+                department_list = res["department"]
+                return department_list
         except Exception as e:
             print(e)
             return None
 
 
+    # 获取部门详情
+    def get_department_detail(self, id):
+        try:
+            access_token = self.get_access_token()
+            url = "https://oapi.dingtalk.com/department/get"
+            r = requests.get(url, params={'access_token': access_token, 'id': id})
+            res = r.json()
+
+            if res["errcode"] == 0:
+                return res
+        except Exception as e:
+            print(e)
+            return None
+
+    # 获取部门人员id列表
+    def get_userid_list(self, depid):
+        try:
+            access_token = self.get_access_token()
+            url = "https://oapi.dingtalk.com/user/getDeptMember"
+            r = requests.get(url, params={'access_token': access_token, 'deptId': depid})
+            res = r.json()
+
+            if res["errcode"] == 0:
+                userid_list = res["userIds"]
+                return userid_list
+        except Exception as e:
+            print(e)
+            return None
+
+    # 获取用户详情
+    def get_user_detail(self, userid):
+        try:
+            access_token = self.get_access_token()
+            url = "https://oapi.dingtalk.com/user/get"
+            r = requests.get(url, params={'access_token': access_token, 'userid': userid})
+            res = r.json()
+
+            if res["errcode"] == 0:
+                return res
+        except Exception as e:
+            print(e)
+            return None
 
 if __name__ == "__main__":
     dti = DingTalkInterface()
-    print (dti.get_access_token())
-    # dti.get_department_id()
-    depart_id = dti.get_depart_parent_id("技术架构群")
-    print(depart_id)
-    user_id = dti.get_user_id_by_department(depart_id)
-    print(user_id)
-    user_detail = dti.get_email_by_user_id(user_id)
-    print (user_detail)
+
+    scope = dti.get_scope()
+    # 所有部门名称
+    for id in scope:
+        departments = dti.get_department_list(id)
+        for dep in departments:
+            print(dep["name"])
+            if dep["name"] == "产品研发中心":
+                cy = dep
+
+
+    # 获取产研全体信息
+    cy_dep_id = cy["id"]
+
+    cy_departments = dti.get_department_list(cy_dep_id)
+    for dep in cy_departments:
+        print(dep["name"])
+        userid_list = dti.get_userid_list(dep["id"])
+
+        for id in userid_list:
+            user_detail = dti.get_user_detail(id)
+            print(user_detail["name"], user_detail["email"])
+
+
+
