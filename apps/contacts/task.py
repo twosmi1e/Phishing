@@ -57,13 +57,19 @@ def get_user_by_dept(dt_dept_id, sys_dept_id):
 def get_dept_user(dep):
     #count = 0  # 计数导入人数
     #failed = 0  # 导入失败人数
+
     dti = DingTalkInterface()
+    # 提取json中信息
     dt_dept_id = dep["id"]
     dept_name = dep["name"]
-    # 本系统部门对象
-    sys_dept = Department.objects.get(name=dept_name)
-    # 获取部门人员
-    get_user_by_dept(dt_dept_id, sys_dept.id)
+
+    if Department.objects.filter(name=dept_name):
+        sys_dept = Department.objects.get(name=dept_name)
+        # 获取部门人员
+        get_user_by_dept(dt_dept_id, sys_dept.id)
+    else:
+        department = Department.objects.create(name=dept_name)
+        get_user_by_dept(dt_dept_id, department.id)
 
     # 获取所有子部门
     all_dept_list = dti.get_department_list(dt_dept_id)
@@ -72,9 +78,12 @@ def get_dept_user(dep):
         # 根据结果添加部门
         if Department.objects.filter(name=dept["name"]):
             print("已导入过此部门")
+            sys_dept_2 = Department.objects.get(name=dept_name)
+            get_user_by_dept(dept["id"], sys_dept_2.id)
         else:
             department = Department.objects.create(name=dept["name"])
             get_user_by_dept(dept["id"], department.id)
+
 
 
 
