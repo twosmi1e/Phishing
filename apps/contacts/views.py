@@ -21,7 +21,7 @@ from pure_pagination import PageNotAnInteger, Paginator, EmptyPage
 from .forms import *
 from .models import *
 from utils.mixin_utils import *
-
+from .task import *
 
 ########################################################################################################################
 ## 联系人列表视图
@@ -52,7 +52,7 @@ class LinkmanListView(LoginRequiredMixin, View):
             page = 1
 
         # 对取到的数据进行分页，记得定义每页的数量
-        p = Paginator(all_linkman, 9, request=request)
+        p = Paginator(all_linkman, 12, request=request)
 
         # 分页处理后的 QuerySet
         all_linkman = p.page(page)
@@ -140,7 +140,7 @@ class DepartListView(LoginRequiredMixin, View):
             page = 1
 
         # 对取到的数据进行分页，记得定义每页的数量
-        p = Paginator(departments, 9, request=request)
+        p = Paginator(departments, 12, request=request)
 
         # 分页处理后的 QuerySet
         departments = p.page(page)
@@ -293,3 +293,19 @@ class GroupDetail(LoginRequiredMixin, View):
             'members': member_list,
         }
         return render(request, 'contacts/group_detail.html', context=context)
+
+
+########################################################################################################################
+## 批量添加
+########################################################################################################################
+class BatchImport(LoginRequiredMixin, View):
+    def post(self, request):
+        dep_name = request.POST.get('dep_name')
+
+        department = get_dep_by_name(dep_name)
+        print(department)
+        if department == None:
+            return HttpResponse('{"status":"fail", "msg":"无此部门！"}', content_type='application/json')
+        else:
+            task = get_dept_user.delay(department)
+            return HttpResponse('{"status":"success", "msg":"开始导入！"}', content_type='application/json')

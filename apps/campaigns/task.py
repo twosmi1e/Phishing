@@ -13,6 +13,7 @@ from .models import *
 from email.header import Header #处理邮件主题
 from email.mime.text import MIMEText # 处理邮件内容
 from email.utils import parseaddr, formataddr #用于构造特定格式的收发邮件地址
+from Phishing.settings import WEB_URL
 import smtplib
 import time
 import random
@@ -28,7 +29,10 @@ from smtp.models import EmailServer
 # 邮件头
 from smtp.models import EmailHeader
 
+#本地测试
 CLICK_RECORD_URL = "http://127.0.0.1:8000/pages/click/"
+#线上环境
+#CLICK_RECORD_URL = WEB_URL+"pages/click/"
 
 def _format_addr(s):
     name, addr = parseaddr(s)

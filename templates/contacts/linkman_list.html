@@ -34,8 +34,9 @@
               </form>
                 <div class="navbar-btn pull-right" style="margin-top: 0px;width: 150px;">
                     <span>
-                          <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#AddLinkmanModal"><i class="fa fa-plus"></i> 添加联系人</button>
-                      </span>
+                        <button type="button" class="btn btn-block btn-default" data-toggle="modal" data-target="#ImportModal">导入</button>
+                        <button type="button" class="btn btn-block btn-success" data-toggle="modal" data-target="#AddLinkmanModal"><i class="fa fa-plus"></i> 添加联系人</button>
+                    </span>
                 </div>
             </div>
 
@@ -108,11 +109,16 @@
                 </ul>
               </div>
             </div>
+        </div>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
 
 
 
 {% block script %}
+
     <!-- 添加框 -->
 
         <div class="modal fade" id="AddLinkmanModal">
@@ -358,11 +364,66 @@
             });
         });
     </script>
-        </div>
-        </div>
-        </div>
-            </div>
 {% endfor %}
+
+<div class="modal fade" id="ImportModal">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">导入部门人员信息</h4>
+              </div>
+              <div class="modal-body">
+                 <form method="post" id="js_importForm">
+                  <div class="form-group">
+                      <input type="text" class="form-control" placeholder="部门名" id="dep_name"/>
+                  </div>
+                 </form>
+
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" id="js_import">导入</button>
+              </div>
+            </div>
+            <!-- /.modal-content -->
+          </div>
+          <!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
+
+    <script>
+        $(function () {
+            $('#js_import').on('click', function () {
+                var dep_name = $('#dep_name').val();
+                 $.ajax({
+                    cache: false,
+                    type: "POST",
+                    url: "{% url 'contacts:batch_import' %}",
+                    data: {
+                        'dep_name':dep_name,
+                    },
+                    async: true,
+                    beforeSend: function (xhr, settings) {
+                        // 这里需要csrf_token的值，而不是代码
+                        xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+                    },
+                    success: function (data) {
+                        if (data.status == 'success') {
+                            toastr.options.timeOut = 1000;
+                            toastr.options.onHidden = function() { window.location.href = "{% url 'contacts:linkman_list' %}"; }
+                            toastr.success(data.msg);
+                        } else if (data.status == 'fail') {
+                            toastr.error(data.msg);
+                        }
+                    }
+                 });
+            });
+        });
+    </script>
+
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
 <script src="{% static 'toastr/toastr.min.js' %}"></script>
 <script src="{% static 'adminlet-2.4.10/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>

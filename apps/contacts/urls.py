@@ -43,6 +43,8 @@ urlpatterns = [
     path('group/del/<int:g_id>', DeleteGroup.as_view(), name='del_group'),
     # 分组详情
     path('group/detail/<int:g_id>', GroupDetail.as_view(), name='group_detail'),
+    # 批量导入
+    path('import/', BatchImport.as_view(), name='batch_import'),
 ]
 
 

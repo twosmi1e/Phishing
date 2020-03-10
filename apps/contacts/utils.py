@@ -126,25 +126,25 @@ if __name__ == "__main__":
 
     scope = dti.get_scope()
     # 所有部门名称
-    for id in scope:
-        departments = dti.get_department_list(id)
-        for dep in departments:
-            print(dep["name"])
-            if dep["name"] == "产品研发中心":
-                cy = dep
-
-
-    # 获取产研全体信息
-    cy_dep_id = cy["id"]
-
-    cy_departments = dti.get_department_list(cy_dep_id)
-    for dep in cy_departments:
-        print(dep["name"])
-        userid_list = dti.get_userid_list(dep["id"])
-
-        for id in userid_list:
-            user_detail = dti.get_user_detail(id)
-            print(user_detail["name"], user_detail["email"])
+    # for id in scope:
+    #     departments = dti.get_department_list(id)
+    #     for dep in departments:
+    #         print(dep["name"])
+    #         if dep["name"] == "产品研发中心":
+    #             cy = dep
+    #
+    #
+    # # 获取产研全体信息
+    # cy_dep_id = cy["id"]
+    #
+    # cy_departments = dti.get_department_list(cy_dep_id)
+    # for dep in cy_departments:
+    #     print(dep["name"])
+    #     userid_list = dti.get_userid_list(dep["id"])
+    #
+    #     for id in userid_list:
+    #         user_detail = dti.get_user_detail(id)
+    #         print(user_detail["name"], user_detail["email"])
 
 
 
