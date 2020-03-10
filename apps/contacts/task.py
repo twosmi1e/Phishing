@@ -29,7 +29,7 @@ def get_dep_by_name(name):
     return None
 
 # 根据钉钉部门id获取部门人员信息并导入存储
-def get_user_by_dept(dt_dept_id, sys_dept_id):
+def get_user_by_dept(dt_dept_id, system_id):
     dti = DingTalkInterface()
     userid_list = dti.get_userid_list(dt_dept_id)
 
@@ -43,7 +43,7 @@ def get_user_by_dept(dt_dept_id, sys_dept_id):
                 linkman = Linkman()
                 linkman.name = user_detail["name"]
                 linkman.email = user_detail["email"]
-                linkman.depart_id = sys_dept_id
+                linkman.depart_id = system_id
                 linkman.save()
                 print("添加成功")
 
@@ -78,7 +78,7 @@ def get_dept_user(dep):
         # 根据结果添加部门
         if Department.objects.filter(name=dept["name"]):
             print("已导入过此部门")
-            sys_dept_2 = Department.objects.get(name=dept_name)
+            sys_dept_2 = Department.objects.get(name=dept["name"])
             get_user_by_dept(dept["id"], sys_dept_2.id)
         else:
             department = Department.objects.create(name=dept["name"])
