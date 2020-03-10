@@ -13,8 +13,8 @@ class EmailServer(models.Model):
     interface = models.CharField(verbose_name="服务器类型", choices=INTERFACE_TYPE, max_length=10)
     host = models.CharField(verbose_name="服务器地址", max_length=40)
     port = models.CharField(verbose_name="端口", default="25", max_length=10)
-    mail_user = models.CharField(verbose_name="用户名", max_length=20)
-    mail_pass = models.CharField(verbose_name="授权口令", max_length=20)
+    mail_user = models.CharField(verbose_name="用户名", max_length=50)
+    mail_pass = models.CharField(verbose_name="授权口令", max_length=50)
 
 
     class Meta:
