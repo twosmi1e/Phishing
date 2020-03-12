@@ -12,7 +12,7 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.views import View
 from django.contrib.auth import login, logout, authenticate
 from django.urls import reverse
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, Http404, JsonResponse
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.backends import ModelBackend
 from django.db.models import Q
@@ -271,5 +271,10 @@ class TestHeader(LoginRequiredMixin, View):
         try:
             server.sendmail(eserver.mail_user, to_addr, msg.as_string())
             return HttpResponse('{"status":"success", "msg":"发送成功！"}', content_type='application/json')
-        except smtplib.SMTPException:
-            return HttpResponse('{"status":"fail", "msg":"发送失败！"}', content_type='application/json')
+        except smtplib.SMTPException as e:
+            data = {
+                'status': 'success',
+                'msg': e
+            }
+            return JsonResponse(data)
+
