@@ -2,6 +2,8 @@
 
 Django+celery+rabbitmq
 
+## 相关文档
+[钓鱼邮件系统](https://conf.shishike.com/pages/viewpage.action?pageId=46354129)
 
 ## 基本功能模块
 - 目标管理
@@ -12,12 +14,14 @@ Django+celery+rabbitmq
 - 用户管理
 
 
-## TODO-List
+## TODO
 - [x] task增加报错处理
 - [x] 钓鱼页面设定切换跳转
 - [x] 分组详情列表
 - [x] 添加目标处批量导入邮件发送目标
 - [ ] 丰富dashboard页面
 - [x] 邮件池轮询发送
-- [ ] 列表增加排序搜索功能
+- [x] 列表搜索功能
+- [ ] 列表排序功能
+- [ ] 分组添加功能优化
 - [ ] 通知功能
