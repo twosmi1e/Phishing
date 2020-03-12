@@ -42,12 +42,10 @@ class IndexView(LoginRequiredMixin, View):
             landing_pages = landing_pages.filter(
                 Q(id__icontains=keywords) |
                 Q(name__icontains=keywords) |
-                Q(html__icontains=keywords) |
                 Q(redirect_url__icontains=keywords)
             )
 
-        else:
-            display_chose = 'all'
+
 
         # 判断页码
         try:
@@ -64,7 +62,6 @@ class IndexView(LoginRequiredMixin, View):
         context = {
             'web_title': web_title,
             'web_func': web_func,
-            'display_chose': display_chose,
             'pages': landing_pages,
         }
         return render(request, 'pages/page_list.html', context=context)

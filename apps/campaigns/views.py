@@ -57,8 +57,6 @@ class CampaignListView(LoginRequiredMixin, View):
                 Q(name__icontains=keywords)
             )
 
-        else:
-            display_chose = 'all'
 
         # 判断页码
         try:
@@ -75,7 +73,6 @@ class CampaignListView(LoginRequiredMixin, View):
         context = {
             'web_title': web_title,
             'web_func': web_func,
-            'display_chose': display_chose,
             'campaigns': campaigns,
         }
 
@@ -123,7 +120,7 @@ class SaveCampaign(LoginRequiredMixin, View):
             campaign.page = Page.objects.get(id=int(request.POST.get('page')))
 
             server_list = request.POST.getlist('servers')
-            print(server_list)
+            #print(server_list)
             for i in server_list:
                 print(i)
                 campaign.servers.add(i)

@@ -42,9 +42,6 @@ class LinkmanListView(LoginRequiredMixin, View):
                 Q(depart__name__icontains=keywords)
             )
 
-        else:
-            display_chose = 'all'
-
         # 判断页码
         try:
             page = request.GET.get('page', 1)
@@ -61,7 +58,6 @@ class LinkmanListView(LoginRequiredMixin, View):
             'web_title': web_title,
             'web_func': web_func,
             'all_linkman': all_linkman,
-            'display_chose': display_chose,
             'departments': departments,
         }
         return render(request, 'contacts/linkman_list.html', context=context)
@@ -122,6 +118,7 @@ class DepartListView(LoginRequiredMixin, View):
         web_title = 'depart_manage'
         web_func = 'depart_list'
         departments = Department.objects.all()
+        # 用户搜索
         keywords = request.GET.get('keywords', '')
 
         if keywords != '':
@@ -130,8 +127,6 @@ class DepartListView(LoginRequiredMixin, View):
                 Q(name__icontains=keywords)
             )
 
-        else:
-            display_chose = 'all'
 
         # 判断页码
         try:
@@ -148,7 +143,6 @@ class DepartListView(LoginRequiredMixin, View):
         context = {
             'web_title': web_title,
             'web_func': web_func,
-            'display_chose': display_chose,
             'departments': departments,
         }
         return render(request, 'contacts/depart_list.html', context=context)
@@ -216,9 +210,6 @@ class GroupListView(LoginRequiredMixin, View):
                 Q(group_members__name__icontains=keywords)
             )
 
-        else:
-            display_chose = 'all'
-
         # 判断页码
         try:
             page = request.GET.get('page', 1)
@@ -234,7 +225,6 @@ class GroupListView(LoginRequiredMixin, View):
         context = {
             'web_title': web_title,
             'web_func': web_func,
-            'display_chose': display_chose,
             'groups': groups,
             'linkmen': linkmen,
         }
@@ -301,7 +291,8 @@ class GroupDetail(LoginRequiredMixin, View):
 class BatchImport(LoginRequiredMixin, View):
     def post(self, request):
         dep_name = request.POST.get('dep_name')
-
+        # group_name = request.POST.get('group_name')
+        # print(group_name)
         department = get_dep_by_name(dep_name)
         print(department)
         if department == None:

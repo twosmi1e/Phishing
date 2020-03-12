@@ -9,6 +9,7 @@ from django.shortcuts import render, HttpResponseRedirect
 from django.views import View
 from django.http import HttpResponse
 from django.db.models import Count, Sum
+from django.db.models import Q
 ########################################################################################################################
 ## 系统自带模块导入
 ########################################################################################################################
@@ -64,6 +65,14 @@ class ClickRecordView(View):
         all_records = ClickRecord.objects.all().order_by('-add_time')
 
         keywords = request.GET.get('keywords', '')
+
+
+        if keywords != '':
+            all_records = all_records.filter(
+                Q(victim__name__icontains=keywords) |
+                Q(agent__icontains=keywords) |
+                Q(ip__icontains=keywords)
+            )
 
         # 判断页码
         try:

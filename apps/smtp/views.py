@@ -50,12 +50,9 @@ class ServerListView(LoginRequiredMixin, View):
             email_server = email_server.filter(
                 Q(id__icontains=keywords) |
                 Q(name__icontains=keywords) |
-                Q(interface__icontains=keywords) |
                 Q(host__icontains=keywords)
             )
 
-        else:
-            display_chose = 'all'
 
         # 判断页码
         try:
@@ -72,7 +69,6 @@ class ServerListView(LoginRequiredMixin, View):
         context = {
             'web_title': web_title,
             'web_func': web_func,
-            'display_chose': display_chose,
             'emailservers': email_server,
             'interface_choice': interface_choice,
         }
@@ -181,9 +177,6 @@ class HeaderListView(LoginRequiredMixin, View):
                 Q(from_name__icontains=keywords)
             )
 
-        else:
-            display_chose = 'all'
-
         # 判断页码
         try:
             page = request.GET.get('page', 1)
@@ -199,7 +192,6 @@ class HeaderListView(LoginRequiredMixin, View):
         context = {
             'web_title': web_title,
             'web_func': web_func,
-            'display_chose': display_chose,
             'emailheaders': email_header,
             'emailservers': email_server,
         }

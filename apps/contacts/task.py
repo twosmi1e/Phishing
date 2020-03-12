@@ -51,6 +51,12 @@ def get_user_by_dept(dt_dept_id, system_id):
             print(e)
 
 
+# 添加联系人到分组
+def add_to_group(group_name, user_id):
+    group = Group.objects.get_or_create(name=group_name)
+    group.group_members.add(user_id)
+
+
 
 # 获取指定部门下人员信息并全部导入
 @shared_task()

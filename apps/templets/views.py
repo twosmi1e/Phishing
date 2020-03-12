@@ -47,8 +47,6 @@ class IndexView(LoginRequiredMixin, View):
                 Q(subject__icontains=keywords)
             )
 
-        else:
-            display_chose = 'all'
 
         # 判断页码
         try:
@@ -65,7 +63,6 @@ class IndexView(LoginRequiredMixin, View):
         context = {
             'web_title': web_title,
             'web_func': web_func,
-            'display_chose': display_chose,
             'templets': templet,
         }
         return render(request, 'templets/templet_list.html', context=context)
