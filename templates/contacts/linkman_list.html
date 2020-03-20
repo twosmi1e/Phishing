@@ -5,6 +5,10 @@
   联系人列表
 {% endblock title %}
 
+{% block css %}
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/bower_components/select2/dist/css/select2.min.css' %}">
+{% endblock %}
+
 <!-- 主体 -->
 {% block content %}
   <div class="col">
@@ -142,7 +146,7 @@
                     </div>
                     <label class="control-label" for="depart">部门:</label>
                     <div class="form-group">
-                        <select name="depart" id="depart" class="selectpicker form-control" >
+                        <select name="depart" id="depart" class="form-control select2" style="width: 100%">
                             {% for each_department in departments %}
                                 <option value="{{ each_department.id }}">{{ each_department.name }}</option>
                             {% endfor %}
@@ -427,5 +431,10 @@
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
 <script src="{% static 'toastr/toastr.min.js' %}"></script>
 <script src="{% static 'adminlet-2.4.10/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
-
+<script>
+  $(function () {
+      //Initialize Select2 Elements
+      $('.select2').select2()
+  });
+</script>
 {% endblock script %}

@@ -81,7 +81,7 @@ class LoginView(View):
                     login_record.user = user
                     login_record.agent = request.META['HTTP_USER_AGENT']
                     login_record.ip = request.META['REMOTE_ADDR']
-                    login_record.city = get_ip_location(request.META['REMOTE_ADDR'])
+                 #   login_record.city = get_ip_location(request.META['REMOTE_ADDR'])
                     login_record.save()
                     return HttpResponseRedirect(reverse('users:index'))
                 else:
