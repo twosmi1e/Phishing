@@ -78,7 +78,7 @@
 <!-- BAR CHART -->
           <div class="box box-success">
             <div class="box-header with-border">
-              <h3 class="box-title">Bar Chart</h3>
+              <h3 class="box-title">图表统计</h3>
 
               <div class="box-tools pull-right">
                 <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
@@ -88,31 +88,35 @@
             </div>
             <div class="box-body">
               <div class="chart">
-                <canvas id="barChart" style="height:230px"></canvas>
+                <canvas id="barChart" style="height:400px"></canvas>
               </div>
             </div>
             <!-- /.box-body -->
           </div>
           <!-- /.box -->
 
+
+{% endblock content %}
+
+
+
+
+{% block script%}
+
 <script>
-    $(function () {
-    // Get context with jQuery - using jQuery's .get() method.
-    var areaChartCanvas = $('#areaChart').get(0).getContext('2d')
-    // This will get the first returned node in the jQuery collection.
-    var areaChart       = new Chart(areaChartCanvas)
+$(function () {
     var areaChartData = {
-      labels  : ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels  : ['Q1', 'Q2', 'Q3', 'Q4'],
       datasets: [
         {
-          label               : 'Electronics',
+          label               : '发送成功数量',
           fillColor           : 'rgba(210, 214, 222, 1)',
           strokeColor         : 'rgba(210, 214, 222, 1)',
           pointColor          : 'rgba(210, 214, 222, 1)',
           pointStrokeColor    : '#c1c7d1',
           pointHighlightFill  : '#fff',
           pointHighlightStroke: 'rgba(220,220,220,1)',
-          data                : [65, 59, 80, 81, 56, 55, 40]
+          data                : [{{ success }}, 0, 0, 0]
         },
         {
           label               : 'Digital Goods',
@@ -122,10 +126,11 @@
           pointStrokeColor    : 'rgba(60,141,188,1)',
           pointHighlightFill  : '#fff',
           pointHighlightStroke: 'rgba(60,141,188,1)',
-          data                : [28, 48, 40, 19, 86, 27, 90]
+          data                : [{{ clickrecord }}, 0, 0, 0]
         }
       ]
     }
+
     //-------------
     //- BAR CHART -
     //-------------
@@ -167,14 +172,6 @@
     barChart.Bar(barChartData, barChartOptions)
   })
 </script>
-
-{% endblock content %}
-
-
-
-
-{% block script%}
-
 
 <script src="{% static 'adminlet-2.4.10/bower_components/chart.js/Chart.js' %}"></script>
 <link href="{% static 'toastr/toastr.css' %}" rel="stylesheet"/>
