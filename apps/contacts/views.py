@@ -291,12 +291,16 @@ class GroupDetail(LoginRequiredMixin, View):
 class BatchImport(LoginRequiredMixin, View):
     def post(self, request):
         dep_name = request.POST.get('dep_name')
-        # group_name = request.POST.get('group_name')
-        # print(group_name)
+        group_name = request.POST.get('group_name')
+        print(group_name)
         department = get_dep_by_name(dep_name)
         print(department)
         if department == None:
             return HttpResponse('{"status":"fail", "msg":"无此部门！"}', content_type='application/json')
         else:
-            task = get_dept_user.delay(department)
-            return HttpResponse('{"status":"success", "msg":"开始导入！"}', content_type='application/json')
+            if group_name:
+                task = get_user_create_group.delay(department, group_name)
+                return HttpResponse('{"status":"success", "msg":"开始导入！"}', content_type='application/json')
+            else:
+                task = get_dept_user.delay(department)
+                return HttpResponse('{"status":"success", "msg":"开始导入！"}', content_type='application/json')

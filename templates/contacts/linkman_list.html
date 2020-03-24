@@ -383,6 +383,9 @@
                   <div class="form-group">
                       <input type="text" class="form-control" placeholder="部门名" id="dep_name"/>
                   </div>
+                  <div class="form-group">
+                      <input type="text" class="form-control" placeholder="新建分组名(无需创建分组可不填)" id="group_name">
+                  </div>
                  </form>
 
 
@@ -402,12 +405,14 @@
         $(function () {
             $('#js_import').on('click', function () {
                 var dep_name = $('#dep_name').val();
+                var group_name = $('#group_name').val();
                  $.ajax({
                     cache: false,
                     type: "POST",
                     url: "{% url 'contacts:batch_import' %}",
                     data: {
                         'dep_name':dep_name,
+                        'group_name':group_name,
                     },
                     async: true,
                     beforeSend: function (xhr, settings) {

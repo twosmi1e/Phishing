@@ -125,6 +125,8 @@ if __name__ == "__main__":
     dti = DingTalkInterface()
 
     scope = dti.get_scope()
+
+
     # 所有部门名称
     # for id in scope:
     #     departments = dti.get_department_list(id)

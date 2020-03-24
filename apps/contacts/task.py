@@ -9,7 +9,7 @@
 from __future__ import absolute_import
 from celery import shared_task
 
-from .models import *
+from .models import Department, Linkman, Group
 from .utils import *
 
 
@@ -27,6 +27,7 @@ def get_dep_by_name(name):
                 return result
 
     return None
+
 
 # 根据钉钉部门id获取部门人员信息并导入存储
 def get_user_by_dept(dt_dept_id, system_id):
@@ -46,24 +47,59 @@ def get_user_by_dept(dt_dept_id, system_id):
                 linkman.depart_id = system_id
                 linkman.save()
                 print("添加成功")
-
         except Exception as e:
             print(e)
 
 
-# 添加联系人到分组
-def add_to_group(group_name, user_id):
-    group = Group.objects.get_or_create(name=group_name)
-    group.group_members.add(user_id)
+def get_userandgroup_by_dept(dt_dept_id, system_id, group):
+    dti = DingTalkInterface()
+    userid_list = dti.get_userid_list(dt_dept_id)
 
+    for id in userid_list:
+        user_detail = dti.get_user_detail(id)
+        print(user_detail["name"], user_detail["email"])
+        try:
+            if Linkman.objects.filter(name=user_detail["name"]):
+                print("已有此员工信息")
+            else:
+                linkman = Linkman()
+                linkman.name = user_detail["name"]
+                linkman.email = user_detail["email"]
+                linkman.depart_id = system_id
+                linkman.save()
+                group.group_members.add(linkman.id)
+                print("添加成功到分组")
+        except Exception as e:
+            print(e)
+
+
+@shared_task()
+def get_user_create_group(dep, group_name):
+    # 获取分组
+    group = Group.objects.get_or_create(name=group_name)
+    group = group[0]
+    print(group.name)
+
+    dti = DingTalkInterface()
+    dt_dept_id = dep["id"]
+    dept_name = dep["name"]
+    # 本系统部门对象
+    sys_dept = Department.objects.get_or_create(name=dept_name)
+    # 获取部门人员并导入
+    get_userandgroup_by_dept(dt_dept_id, sys_dept[0].id, group)
+
+    # 获取所有子部门
+    all_dept_list = dti.get_department_list(dt_dept_id)
+    for dept in all_dept_list:
+        print(dept["name"])
+        # 根据结果添加部门
+        sys_dept = Department.objects.get_or_create(name=dept["name"])
+        get_userandgroup_by_dept(dept["id"], sys_dept[0].id, group)
 
 
 # 获取指定部门下人员信息并全部导入
 @shared_task()
 def get_dept_user(dep):
-    #count = 0  # 计数导入人数
-    #failed = 0  # 导入失败人数
-
     dti = DingTalkInterface()
     # 提取json中信息
     dt_dept_id = dep["id"]
@@ -89,10 +125,6 @@ def get_dept_user(dep):
         else:
             department = Department.objects.create(name=dept["name"])
             get_user_by_dept(dept["id"], department.id)
-
-
-
-
 
 
 
