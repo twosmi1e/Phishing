@@ -300,7 +300,7 @@ class BatchImport(LoginRequiredMixin, View):
         else:
             if group_name:
                 task = get_user_create_group.delay(department, group_name)
-                return HttpResponse('{"status":"success", "msg":"开始导入！"}', content_type='application/json')
+                return HttpResponse('{"status":"success", "msg":"开始导入并分组！"}', content_type='application/json')
             else:
                 task = get_dept_user.delay(department)
                 return HttpResponse('{"status":"success", "msg":"开始导入！"}', content_type='application/json')
