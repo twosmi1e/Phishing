@@ -7,7 +7,7 @@
 
 {% block css %}
     <script src="{% static 'ckeditor/ckeditor.js' %}"></script>
-
+    <link rel="stylesheet" href="{% static 'adminlet-2.4.10/bower_components/datatables.net-bs/css/dataTables.bootstrap.min.css' %}">
 {% endblock css %}
 
 <!-- 主体 -->
@@ -34,7 +34,7 @@
                 <div class="row" style="height: 610px;">
                 <div class="col-sm-12">
 
-                  <table class="table table-hover table-bordered dataTable" id="linkmantable" role="grid">
+                  <table class="table table-hover table-bordered dataTable" id="groupmembertable" role="grid">
 
                     <!-- 标题行 -->
                     <thead>
@@ -114,8 +114,15 @@
 {% endblock %}
 
 {% block script %}
-<script>
+<script src="{% static 'adminlet-2.4.10/bower_components/datatables.net/js/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'adminlet-2.4.10/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js' %}"></script>
 
+<script>
+$('#groupmembertable').DataTable({
+      'paging'      : true,
+      'searching'   : true,
+      'ordering'    : true,
+  });
 
 </script>
 
