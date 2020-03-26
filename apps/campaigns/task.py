@@ -115,7 +115,7 @@ def post_email(campaign_id):
                 print("login success")
             server.sendmail(server_user, to_addr, msg.as_string())
             # 降低发信频率 避免被拦截
-            time.sleep(3)
+            time.sleep(10)
             campaign.success_num = campaign.success_num+1
             print("send success")
         except smtplib.SMTPException as e:

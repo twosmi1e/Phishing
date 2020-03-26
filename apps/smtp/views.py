@@ -26,7 +26,7 @@ from email.header import Header #处理邮件主题
 from email.mime.text import MIMEText # 处理邮件内容
 from email.utils import parseaddr, formataddr #用于构造特定格式的收发邮件地址
 import smtplib #用于发送邮件
-
+import json
 ########################################################################################################################
 ## 自建模块导入
 ########################################################################################################################
@@ -272,9 +272,10 @@ class TestHeader(LoginRequiredMixin, View):
             server.sendmail(eserver.mail_user, to_addr, msg.as_string())
             return HttpResponse('{"status":"success", "msg":"发送成功！"}', content_type='application/json')
         except smtplib.SMTPException as e:
+            msg = str(e)
             data = {
-                'status': 'success',
-                'msg': e
+                'status': 'fail',
+                'msg': msg
             }
             return JsonResponse(data)
 
