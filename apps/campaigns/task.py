@@ -103,6 +103,7 @@ def post_email(campaign_id):
     # 构造邮件内容
     for (id, email) in id_email_dict:
         to_addr = email
+        # 构造点击链接
         url = CLICK_RECORD_URL+str(id)
         msg = MIMEText(email_text % (to_addr, url), 'HTML', 'utf-8')
         msg['To'] = _format_addr('<%s>' % to_addr)

@@ -37,9 +37,10 @@ class IndexView(View):
         # 获取任务数量
         number_of_campaign = Campaign.objects.count()
 
+        # 成功和失败数量
         success_email = Campaign.objects.all().aggregate(number=Sum('success_num'))
         failed_email = Campaign.objects.all().aggregate(number=Sum('failed_num'))
-
+        # 点击数量
         clickrecord = ClickRecord.objects.count()
 
         context = {
