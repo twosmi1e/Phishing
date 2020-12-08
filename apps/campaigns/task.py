@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time    : 2020/1/15 15:23
+# @Time    : 2020/6/9
 # @Author  : twosmi1e
 # @Site    : 
 # @File    : task.py
@@ -17,6 +17,7 @@ from Phishing.settings import WEB_URL
 import smtplib
 import time
 import random
+import re
 
 # 目标分组
 from contacts.models import Group
@@ -87,8 +88,7 @@ def post_email(campaign_id):
     email_text = campaign.templet.text
 
     # 获取发送目标
-    #target_name_list = campaign.group.get_name_list()
-    #target_email_list = campaign.group.get_email_list()
+
 
     id_email_dict = campaign.group.get_id_email_dict()
 
@@ -99,29 +99,31 @@ def post_email(campaign_id):
     from_addr = campaign.header.from_addr
    # print(from_addr)
 
-
     # 构造邮件内容
-    for (id, email) in id_email_dict:
-        to_addr = email
-        # 构造点击链接
-        url = CLICK_RECORD_URL+str(id)
-        msg = MIMEText(email_text % (to_addr, url), 'HTML', 'utf-8')
-        msg['To'] = _format_addr('<%s>' % to_addr)
-        msg['From'] = _format_addr('%s<%s>' % (from_name, from_addr))
-        msg['Subject'] = Header('%s' % email_subject, 'utf-8').encode()
-        try:
-            server, server_user = choose_server(campaign)
-            if (server != False) and (server_user != False):
-                print(server)
-                print("login success")
-            server.sendmail(server_user, to_addr, msg.as_string())
-            # 降低发信频率 避免被拦截
-            time.sleep(10)
-            campaign.success_num = campaign.success_num+1
-            print("send success")
-        except smtplib.SMTPException as e:
-            campaign.failed_num = campaign.failed_num+1
-            print(e)
+    def sendtype1():
+        for (id, email) in id_email_dict:
+            to_addr = email
+            # 构造点击链接
+            url = CLICK_RECORD_URL+str(id)
+            callname = re.split(r'@', to_addr)
+            print(callname[0])
+            msg = MIMEText(email_text % (callname[0], url), 'HTML', 'utf-8')
+            msg['To'] = _format_addr('<%s>' % to_addr)
+            msg['From'] = _format_addr('%s<%s>' % (from_name, from_addr))
+            msg['Subject'] = Header('%s' % email_subject, 'utf-8').encode()
+            try:
+                server, server_user = choose_server(campaign)
+                if (server != False) and (server_user != False):
+                    print(server)
+                    print("login success")
+                server.sendmail(server_user, to_addr, msg.as_string())
+                # 降低发信频率 避免被拦截
+                time.sleep(10)
+                campaign.success_num = campaign.success_num+1
+                print("send success")
+            except smtplib.SMTPException as e:
+                campaign.failed_num = campaign.failed_num+1
+                print(e)
 
         # 修改任务状态
         campaign.status = 2
@@ -131,9 +133,37 @@ def post_email(campaign_id):
         print("mission complete!")
 
 
+    #构造邮件内容（1）
+    def sendtype2():
+        for (id, email) in id_email_dict:
+            to_addr = email
+            # 构造点击链接
+            url = CLICK_RECORD_URL+str(id)
+            msg = MIMEText(email_text % url, 'HTML', 'utf-8')
+            msg['To'] = _format_addr('<%s>' % to_addr)
+            msg['From'] = _format_addr('%s<%s>' % (from_name, from_addr))
+            msg['Subject'] = Header('%s' % email_subject, 'utf-8').encode()
+            try:
+                server, server_user = choose_server(campaign)
+                if (server != False) and (server_user != False):
+                    print(server)
+                    print("login success")
+                server.sendmail(server_user, to_addr, msg.as_string())
+                # 降低发信频率 避免被拦截
+                time.sleep(10)
+                campaign.success_num = campaign.success_num+1
+                print("send success")
+            except smtplib.SMTPException as e:
+                campaign.failed_num = campaign.failed_num+1
+                print(e)
+        # 修改任务状态
+        campaign.status = 2
+        # 任务结束时间
+        campaign.sendby_date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        campaign.save()
+        print("mission complete!")
 
-
-
+    sendtype2()
 
 
 
