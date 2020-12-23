@@ -3,7 +3,7 @@
 Django+celery+rabbitmq
 
 ## 相关文档
-[钓鱼邮件系统](https://conf.shishike.com/pages/viewpage.action?pageId=46354129)
+
 
 ## 基本功能模块
 - 目标管理
