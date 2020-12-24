@@ -2,7 +2,47 @@
 
 Django+celery+rabbitmq
 
-## 相关文档
+## 安装部署
+下载项目 安装依赖包
+```
+pip -r requirements.txt
+```
+安装mysql
+进入mysql创建数据库
+
+安装rabbitmq
+```
+sudo apt-get install erlang-nox
+wget -O- https://www.rabbitmq.com/rabbitmq-release-signing-key.asc | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install rabbitmq-server
+```
+
+### 修改settings.py
+数据库配置
+```
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'phishing_test',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'USER': 'root',
+        'PASSWORD': '2smilemysql',
+    }
+}
+```
+域名配置
+```
+WEB_URL = 'http://phishing.shishike.com/'
+```
+
+### 运行
+```
+python manage.py migrate
+python manage.py createsuperuser
+python manage.py runserver
+```
 
 
 ## 基本功能模块
@@ -25,3 +65,5 @@ Django+celery+rabbitmq
 - [x] 列表排序功能
 - [x] 分组添加功能优化
 - [ ] 日志功能
+- [ ] 任务邮件通知
+- [ ] 附件功能
