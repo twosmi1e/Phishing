@@ -1,4 +1,4 @@
-# 钓鱼邮件系统
+# 钓鱼邮件测试演练平台
 
 Django+celery+rabbitmq
 
