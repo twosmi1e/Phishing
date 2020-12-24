@@ -34,7 +34,7 @@ DATABASES = {
 ```
 域名配置
 ```
-WEB_URL = 'http://phishing.shishike.com/'
+WEB_URL = 'http://'
 ```
 
 ### 运行
