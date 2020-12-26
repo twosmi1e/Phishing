@@ -107,7 +107,7 @@ DATABASES = {
         'HOST': '127.0.0.1',
         'PORT': '3306',
         'USER': 'root',
-        'PASSWORD': '2smilemasteR',
+        'PASSWORD': '',
     }
 }
 
@@ -190,7 +190,7 @@ DEFAULT_FROM_EMAIL = 'xxxx'
 ########################################################################################################################
 # 添加celery配置
 #djcelery.setup_loader()
-WEB_URL = 'http://phishing.shishike.com/'
+WEB_URL = ''
 BROKER_URL ='amqp://guest@127.0.0.1//'
 CELERY_RESULT_BACKEND = 'amqp://guest@127.0.0.1//'
 CELERY_ACCEPT_CONTENT = ['application/json']
