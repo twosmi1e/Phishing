@@ -9,8 +9,7 @@
 # encoding=utf-8
 import requests
 
-appkey = "dingsb2v8htmrjfwi4sn"
-appsecret = "xEIdfFwMIlEW2qhW3sYyVwFIvoiGDrHDnrLHmeBd69lDERCulfAEgR9-YTTlHAn1"
+
 
 
 class DingTalkInterface(object):
